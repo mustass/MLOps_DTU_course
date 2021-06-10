@@ -44,19 +44,21 @@ def fetch_raw_dataset(dataset_name):
                             outfile.write('"'+obj["reviewText"]+'"'+","+dataset_name)
                         outfile.write("\n")
                     except:
-                        pass
+                        pass#warnings.warn("A record in dataset "+dataset_name+" has been skipped as it was corrupted.")
     except FileNotFoundError:
         download_dataset(dataset_name)
         fetch_raw_dataset(dataset_name)
 
 def download_if_not_existing(datasets):
     try:
-        all_datasets = [f for f in listdir("data/interim/") if isfile(join("data/interim", f)) and f in datasets]
-        if len(all_datasets) == 0:
-            for dataset in datasets:
-                fetch_raw_dataset(dataset)
-    except:
-        pass
+        available_datasets = [f[:-4] for f in listdir("data/external/") if isfile(join("data/external", f)) and f[:-4] in datasets]
+        to_download = [item for item in datasets if item not in available_datasets]
+        
+        for dataset in to_download:
+            fetch_raw_dataset(dataset)
+    except Exception as ex:
+        if type(ex) == 'FileNotFoundError':
+            raise FileNotFoundError("The ./data/ directory does not exists. Create it before moving on.") 
 
 def check_and_create_data_subfolders():
     subfolders = ['raw', 'interim', 'processed', 'external']
@@ -70,21 +72,25 @@ def check_and_create_data_subfolders():
 def ensemble(config_datasets_path):
     check_and_create_data_subfolders()
     datasets = parse_datasets(config_datasets_path)
-    download_if_not_existing(datasets)
     
-
+    download_if_not_existing(datasets)
     f = open("data/raw/AmazonProductReviews.csv", "w")
     for filename in datasets:
+        fetch_raw_dataset(filename)
         with open ("data/interim/"+filename+".csv") as subfile:
             f.write(subfile.read())
 
         os.remove("data/interim/"+filename+".csv")
 
 def parse_datasets(config_datasets_path):
-    datasets_list = []
     with open(config_datasets_path) as f:
         flags = json.load(f)
-    return [k for (k, v) in flags.items() if v==1]
+    try:
+        datasets = [k for (k, v) in flags.items() if int(v)==1]
+    except ValueError:
+        raise ValueError("Insert only 0 (not wanted) or 1 (wanted) in file "+config_datasets_path)
+
+    return datasets
 
 # unused
 def shuffle_final_dataset():
