@@ -16,9 +16,6 @@ def download_dataset(dataset_name, chunk_size=8192):
     endpoint = 'http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_'
     endpoint += dataset_name+'_5.json.gz'
 
-    if not os.path.exists('data/external'):
-        os.makedirs('data/external')
-
     print("Downloading dataset "+dataset_name+"...")
     r = requests.get(endpoint, allow_redirects=True, stream=True)
     progr_bar = tqdm(total=int(r.headers.get('content-length', 0)), unit='iB', unit_scale=True)
@@ -36,9 +33,6 @@ def fetch_raw_dataset(dataset_name):
         with open("data/external/"+dataset_name+".bin", "rb") as extfile:
             data = zlib.decompress(extfile.read(), zlib.MAX_WBITS|32).decode("utf-8")
             data = data.split("\n")
-
-            if not os.path.exists('data/interim'):
-                os.makedirs('data/interim')
 
             with open("data/interim/"+dataset_name+".csv", 'w') as outfile:
                 for review in data:
@@ -64,14 +58,20 @@ def download_if_not_existing(datasets):
     except:
         pass
 
+def check_and_create_data_subfolders():
+    subfolders = ['raw', 'interim', 'processed', 'external']
+    for folder in subfolders:
+        if not os.path.exists('data/'+folder):
+            os.makedirs('data/'+folder)
+
+
 @click.command()
 @click.argument('config_datasets_path', type=click.Path(exists=True))
 def ensemble(config_datasets_path):
+    check_and_create_data_subfolders()
     datasets = parse_datasets(config_datasets_path)
     download_if_not_existing(datasets)
     
-    if not os.path.exists('data/raw'):
-        os.makedirs('data/raw')
 
     f = open("data/raw/AmazonProductReviews.csv", "w")
     for filename in datasets:
