@@ -1,11 +1,28 @@
-certifi==2021.5.30
-chardet==4.0.0
+# local package
+-e .
+
+# external requirements
 click==8.0.1
-idna==2.10
-jsonlib-python3==1.6.1
-path==15.1.2
+Sphinx
+coverage
+awscli
+flake8
+transformers
+torch
+scikit-learn
+tensorboard
+pytest
+yapf
+numpy
+matplotlib
+torchvision
 python-dotenv==0.17.1
 raw-zlib==0.1.15
 requests==2.25.1
 tqdm==4.61.0
 urllib3==1.26.5
+idna==2.10
+jsonlib-python3==1.6.1
+path==15.1.2
+certifi==2021.5.30
+chardet==4.0.0
