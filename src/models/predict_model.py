@@ -50,6 +50,6 @@ with torch.no_grad():
 preds = np.argmax(preds, axis = 1)
 print(classification_report(test_y, preds))
 cm = confusion_matrix(test_y, preds) # labels=['Automotive', 'Patio_Lawn_and_Garden']
-print(cm)
+print('Confusion Matrix: \n', cm)
 
 
