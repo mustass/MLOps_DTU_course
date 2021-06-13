@@ -29,7 +29,7 @@ df_name = 'data/raw/AmazonProductReviews.csv'
 # train_text, val_text, test_text, train_labels, val_labels, test_labels = clean_data(df_name)
 test_seq, test_mask, test_y = clean_data(df_name)
 
-from src.models.model import model
+from src.models.model import BERT_model
 # import BERT-base pretrained model
 bert = AutoModel.from_pretrained('bert-base-uncased')
 # freeze all the parameters
