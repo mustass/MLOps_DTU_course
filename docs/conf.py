@@ -86,7 +86,6 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
 
-
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -166,7 +165,6 @@ html_static_path = ['_static']
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'transformers-group-octupusdoc'
 
-
 # -- Options for LaTeX output --------------------------------------------------
 
 latex_elements = {
@@ -183,8 +181,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index',
-     'transformers-group-octupus.tex',
+    ('index', 'transformers-group-octupus.tex',
      u'transformers-group-octupus Documentation',
      u"The BaddesT MLOppers Alive", 'manual'),
 ]
@@ -209,19 +206,16 @@ latex_documents = [
 # If false, no module index is generated.
 # latex_domain_indices = True
 
-
 # -- Options for manual page output --------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    ('index', 'transformers-group-octupus', u'transformers-group-octupus Documentation',
-     [u"The BaddesT MLOppers Alive"], 1)
-]
+man_pages = [('index', 'transformers-group-octupus',
+              u'transformers-group-octupus Documentation',
+              [u"The BaddesT MLOppers Alive"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
-
 
 # -- Options for Texinfo output ------------------------------------------------
 
@@ -229,7 +223,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'transformers-group-octupus', u'transformers-group-octupus Documentation',
+    ('index', 'transformers-group-octupus',
+     u'transformers-group-octupus Documentation',
      u"The BaddesT MLOppers Alive", 'transformers-group-octupus',
      'Project for the course', 'Miscellaneous'),
 ]
