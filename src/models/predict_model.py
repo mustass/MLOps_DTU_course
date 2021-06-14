@@ -19,6 +19,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from src.models.model import BERT_model
 from transformers import AutoModel
+
 device = 'cpu'
 
 from src.models.clean_data import clean_data
@@ -40,16 +41,15 @@ model = model.to(device)
 weights_path = 'models/BERT_weights_1.pt'
 model.load_state_dict(torch.load(weights_path))
 # model.load_state_dict(torch.load(weights_path, map_location=device))
-print('model weights loaded successfully!')                      
+print('model weights loaded successfully!')
 # get predictions for test data
 with torch.no_grad():
     #
     preds = model(test_seq.to(device), test_mask.to(device))
     preds = preds.detach().cpu().numpy()
 # show model's performance
-preds = np.argmax(preds, axis = 1)
+preds = np.argmax(preds, axis=1)
 print(classification_report(test_y, preds))
-cm = confusion_matrix(test_y, preds) # labels=['Automotive', 'Patio_Lawn_and_Garden']
+cm = confusion_matrix(test_y,
+                      preds)  # labels=['Automotive', 'Patio_Lawn_and_Garden']
 print('Confusion Matrix: \n', cm)
-
-
