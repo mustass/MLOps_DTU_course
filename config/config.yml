@@ -1,5 +1,6 @@
+experiment_name: orangutan # This is done so that we can always find models and their corresponding datasets
+
 data:
-  raw_data_path: './data/raw/AmazonProductReviews.csv' # Where we save and load raw data from
   train_val_test_splits: [0.6,0.2,0.2]
   max_seq_length: 65 # Max review string length for the Tokenizer
   used_datasets: { # Which dataset do we want to join and load (I can't see a case where these are not the same)
@@ -31,5 +32,12 @@ data:
 
 seed: 7
 
+device: 'cpu' # one of 'cpu'/'gpu'
+
 training:
   batch_size: 64     # Batch size
+  lr: 0.02           # Learning rate
+  epochs: 1
+  full: false        # Whether we train the whole BART architecture or only our outer layers
+
+prediction:

@@ -75,34 +75,45 @@ def download_if_not_existing(datasets):
             )
 
 
-def check_and_create_data_subfolders():
-    subfolders = ['raw', 'interim', 'processed', 'external']
+def check_and_create_data_subfolders(root = './data/',subfolders =['raw', 'interim', 'processed', 'external']):
     for folder in subfolders:
-        if not os.path.exists('data/' + folder):
-            os.makedirs('data/' + folder)
+        if not os.path.exists(root + folder):
+            os.makedirs(root + folder)
 
 
 @click.command()
 @click.argument('config_datasets_path',
                 type=click.Path(exists=True),
                 default='./config/config.yml')
+
 def ensemble(config_datasets_path):
     check_and_create_data_subfolders()
     datasets = parse_datasets(config_datasets_path)
+    
+    with open(config_datasets_path) as f:
+        yml = yaml.safe_load(f)
+        name = yml['experiment_name']
+
 
     download_if_not_existing(datasets)
-    f = open("data/raw/AmazonProductReviews.csv", "w")
+    check_and_create_data_subfolders("data/raw/", subfolders=[str(name)])
+    
+    f = open("data/raw/"+ str(name)+"/AmazonProductReviews.csv", "w")
     for filename in datasets:
         fetch_raw_dataset(filename)
         with open("data/interim/" + filename + ".csv") as subfile:
             f.write(subfile.read())
 
         os.remove("data/interim/" + filename + ".csv")
+    
+
+    with open("data/raw/"+ str(name)+'/datasets.txt', 'w') as f:
+        f.write(f'Used datasets: {datasets}')
 
 
 def parse_datasets(config_datasets_path):
     with open(config_datasets_path) as f:
-        flags = yaml.load(f)
+        flags = yaml.safe_load(f)
         flags = flags['data']['used_datasets']
     try:
         datasets = [k for (k, v) in flags.items() if int(v) == 1]
