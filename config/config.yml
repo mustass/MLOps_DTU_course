@@ -41,5 +41,6 @@ compute:
     workspace_name: "s202798Workspace",
     compute_target: "s202798Compute",
     environment_name: "CoolName",
-    experiment_name: "ExperimentName"
+    experiment_name: "ExperimentName",
+    location: "northeurope"
   }
