@@ -12,13 +12,13 @@ def run(config_file="./config/config.yml"):
         flags = yaml.safe_load(f)
 
     if flags['compute'] == 'local':
-        pass
+        pass # TODO: implement this
     elif flags['compute'] == 'azure':
         setup = flags['compute']
         ws = Workspace.create(name=setup['workspace_name'],
                subscription_id=setup['subscription_id'],
                resource_group=setup['resource_group'],
-               location='northeurope'
+               location=setup['location']
                )
         #ws = Workspace.from_config("config/azure_conf.json")
         env = Environment.from_pip_requirements(setup['environment_name'], 'requirements.txt')
@@ -26,23 +26,20 @@ def run(config_file="./config/config.yml"):
 
         #args = ["train", "--config", "config/train_conf.json"]
         config = ScriptRunConfig(source_directory='.',
-                                script='src/models/main.py',
+                                script='src/models/main.py', # TODO: change this
                                 #arguments=args,
                                 compute_target=setup['compute_target'],
                                 environment=env)
 
         run = experiment.submit(config)
         aml_url = run.get_portal_url()
-        print(aml_url)
+        #print(aml_url)
         run.wait_for_completion()
 
 
 if __name__ == "__main__":
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)
-
-    # not used in this stub but often useful for finding various files
-    #project_dir = Path(__file__).resolve().parents[2]
 
     # find .env automagically by walking up directories until it's found, then
     # load up the .env entries as environment variables
