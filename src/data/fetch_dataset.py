@@ -10,6 +10,7 @@ import logging
 from dotenv import find_dotenv, load_dotenv
 from path import Path
 import click
+import yaml
 
 
 def download_dataset(dataset_name, chunk_size=8192):
@@ -68,7 +69,7 @@ def check_and_create_data_subfolders():
 
 
 @click.command()
-@click.argument('config_datasets_path', type=click.Path(exists=True))
+@click.argument('config_datasets_path', type=click.Path(exists=True), default='./config/config.yml')
 def ensemble(config_datasets_path):
     check_and_create_data_subfolders()
     datasets = parse_datasets(config_datasets_path)
@@ -84,7 +85,8 @@ def ensemble(config_datasets_path):
 
 def parse_datasets(config_datasets_path):
     with open(config_datasets_path) as f:
-        flags = json.load(f)
+        flags = yaml.load(f)
+        flags = flags['data']['used_datasets']
     try:
         datasets = [k for (k, v) in flags.items() if int(v)==1]
     except ValueError:
