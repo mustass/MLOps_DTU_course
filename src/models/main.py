@@ -15,7 +15,7 @@ def run(config_file="./config/config.yml"):
         pass
     elif flags['compute'] == 'azure':
         setup = flags['compute']
-        Workspace.create(name=setup['workspace_name'],
+        ws = Workspace.create(name=setup['workspace_name'],
                subscription_id=setup['subscription_id'],
                resource_group=setup['resource_group'],
                location='northeurope'
