@@ -42,13 +42,3 @@ training:
 
 prediction:
 
-compute:
-  azure: { # if local is provided, all this is ignored. If azure is provided, they are used.
-    subscription_id: "dcb1598f-693c-460c-8648-667de51a2475",
-    resource_group: "myResourceGroup",
-    workspace_name: "s202798Workspace",
-    compute_target: "s202798Compute",
-    environment_name: "CoolName",
-    experiment_name: "ExperimentName",
-    location: "northeurope"
-  }
