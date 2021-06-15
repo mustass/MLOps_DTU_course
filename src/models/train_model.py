@@ -24,10 +24,9 @@ class Trainer():
         self.lr = config['training']['lr']
         self.epochs = config['training']['epochs']
         self.full = config['training']['full']
-        self.model = BERT_model(AutoModel.from_pretrained('bert-base-uncased'), n_class=len(self.datasets)).to(self.device)
+        self.bert = AutoModel.from_pretrained('bert-base-uncased')
         
     def check_if_trained(self):
-        print("lo")
         if os.path.exists('./models/'+str(self.name)+'/checkpoint.pt'):
             if click.confirm('Looks like model '+str(self.name)+' has been trained. Do you want to continue?'):
                 return False
@@ -47,49 +46,47 @@ class Trainer():
                 "The datasets could not be found in './data/processed/"+str(self.name)+"/'.")
 
 
-    def train(self):
+    def train(self, full = False):
         self.trained = self.check_if_trained()
-        print(self.trained)
         train_set = self.load_datasets("train")
-        #val_set = self.load_datasets("validate")
-        #test_set = self.load_datasets("test")
-        print(train_set)
-        #train_loop(train_set, self.model, self.lr, self.batch_size, self.epochs, './models/'+str(self.name))
+        if not full:
+            for param in self.bert.parameters():
+                param.requires_grad = False
+        
+        self.model = BERT_model(self.bert, n_class=len(self.datasets)).to(self.device)
+        self.train_losses, self.train_counter = train_loop(train_set, self.model, self.lr, self.batch_size, self.epochs, self.device ,'./models/'+str(self.name))
 
 
-
-
-
-
-
-def train_loop(dataset, model, lr, bs, epochs, savepath):
+def train_loop(dataset, model, lr, bs, epochs, device, savepath):
 
     criterion = torch.nn.NLLLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
     trainloader = torch.utils.data.DataLoader(dataset,
                                               batch_size=bs,
-                                              shuffle=True)
+                                              shuffle=True,
+                                              pin_memory = True)
 
     train_losses = []
     train_counter = []
     for e in range(epochs):
-        for batch_idx, (image, label) in enumerate(trainloader):
+        for batch_idx, (input, mask, label) in enumerate(trainloader):
             optimizer.zero_grad()
-            output = model(image)
+            
+            output = model(input.to(device), mask.to(device))
             loss = criterion(output, label)
             loss.backward()
             optimizer.step()
             if batch_idx % 10 == 0 or e == 0:
                 print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                    e, batch_idx * len(image), len(trainloader.dataset),
+                    e, batch_idx * len(input), len(trainloader.dataset),
                     100. * batch_idx / len(trainloader), loss.item()))
                 train_losses.append(loss.item())
                 train_counter.append((batch_idx * 64) +
                                      ((e - 1) * len(trainloader.dataset)))
                 torch.save(model.state_dict(),
-                           savepath + '/checkpoints/model.pth')
+                           savepath + '/model.pth')
                 torch.save(optimizer.state_dict(),
-                           savepath + '/checkpoints/optimizer.pth')
+                           savepath + '/optimizer.pth')
     return train_losses, train_counter
 
 
@@ -102,10 +99,7 @@ def main(config_path):
         config = yaml.safe_load(f)
 
     trainer = Trainer(config)
-    print(trainer)
-    print(trainer.check_if_trained())
-
-
+    trainer.train(config['training']['full'])
 
 
 if __name__ == '__main__':
