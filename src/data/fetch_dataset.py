@@ -69,7 +69,7 @@ def download_if_not_existing(datasets):
         for dataset in to_download:
             fetch_raw_dataset(dataset)
     except Exception as ex:
-        if type(ex) == 'FileNotFoundError':
+        if type(ex) == FileNotFoundError:
             raise FileNotFoundError(
                 "The ./data/ directory does not exists. Create it before moving on."
             )
@@ -81,18 +81,14 @@ def check_and_create_data_subfolders(root = './data/',subfolders =['raw', 'inter
             os.makedirs(root + folder)
 
 
-@click.command()
-@click.argument('config_datasets_path',
-                type=click.Path(exists=True),
-                default='./config/config.yml')
 
-def ensemble(config_datasets_path):
+
+def ensemble(config):
     check_and_create_data_subfolders()
-    datasets = parse_datasets(config_datasets_path)
+    datasets = parse_datasets(config)
     
-    with open(config_datasets_path) as f:
-        yml = yaml.safe_load(f)
-        name = yml['experiment_name']
+
+    name = config['experiment_name']
 
 
     download_if_not_existing(datasets)
@@ -111,15 +107,13 @@ def ensemble(config_datasets_path):
         f.write(f'Used datasets: {datasets}')
 
 
-def parse_datasets(config_datasets_path):
-    with open(config_datasets_path) as f:
-        flags = yaml.safe_load(f)
-        flags = flags['data']['used_datasets']
+def parse_datasets(config):
+
+    flags = config['data']['used_datasets']
     try:
         datasets = [k for (k, v) in flags.items() if int(v) == 1]
     except ValueError:
-        raise ValueError("Insert only 0 (not wanted) or 1 (wanted) in file " +
-                         config_datasets_path)
+        raise ValueError("Insert only 0 (not wanted) or 1 (wanted) in the config file")
 
     return datasets
 
@@ -132,6 +126,16 @@ def shuffle_final_dataset():
     with open("data/raw/AmazonProductReviews.csv", "w") as f:
         f.writelines(lines)
 
+@click.command()
+@click.argument('config_path',
+                type=click.Path(exists=True),
+                default='./config/config.yml')
+
+def main(config_path):
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+    ensemble(config)
+    
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -143,5 +147,5 @@ if __name__ == '__main__':
     # find .env automagically by walking up directories until it's found, then
     # load up the .env entries as environment variables
     load_dotenv(find_dotenv())
-
-    ensemble()
+    main()
+    

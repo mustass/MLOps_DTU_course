@@ -19,25 +19,22 @@ from src.data.fetch_dataset import check_and_create_data_subfolders, parse_datas
 
 
 @click.command()
-@click.argument('config_datasets_path',
+@click.argument('config_path',
                 type=click.Path(exists=True),
                 default='./config/config.yml')
-def clean_data(config_datasets_path):
+def clean_data(config_path):
 
     load_dotenv(find_dotenv())
 
-    # Read the classes we use:
-
-    datasets = parse_datasets(config_datasets_path)
-    print("Using following datasets: {}".format(datasets))
-
     # Getting the rest of configs
-    with open(config_datasets_path) as f:
+    with open(config_path) as f:
         yml = yaml.safe_load(f)
         experiment_name = yml['experiment_name']
         seed = yml['seed']
         splits = yml['data']['train_val_test_splits']
         max_length = yml['data']['max_seq_length']
+        datasets = parse_datasets(yml)
+    print("Using following datasets: {}".format(datasets))
 
     # load raw csv file for given reviews at supplied path
     df = check_and_load_raw("data/raw/"+ str(experiment_name)+"/AmazonProductReviews.csv")

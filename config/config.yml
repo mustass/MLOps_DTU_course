@@ -27,7 +27,7 @@ data:
                   "Baby": 0,
                   "Digital_Music": 0,
                   "Musical_Instruments": 1,
-                  "Amazon_Instant_Video": 0
+                  "Amazon_Instant_Video": 1
                   }
 
 seed: 7

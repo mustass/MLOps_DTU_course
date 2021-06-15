@@ -14,26 +14,20 @@ from src.models.model import BERT_model
 from src.data.fetch_dataset import parse_datasets, check_and_create_data_subfolders
 from transformers import AutoModel
 
-@click.command()
-@click.argument('config_path',
-                type=click.Path(exists=True),
-                default='./config/config.yml')
 
 class Trainer():
-    def __init__(self, config_path):
-        with open(config_path) as f:
-            yml = yaml.safe_load(f)
-            self.device = yml['device']
-            self.name = yml['experiment_name']
-            self.datasets = parse_datasets(config_path)
-            self.batch_size = yml['training']['batch_size']
-            self.lr = yml['training']['lr']
-            self.epochs = yml['training']['epochs']
-            self.full = yml['training']['full']
-
+    def __init__(self, config):
+        self.device = config['device']
+        self.name = config['experiment_name']
+        self.datasets = parse_datasets(config)
+        self.batch_size = config['training']['batch_size']
+        self.lr = config['training']['lr']
+        self.epochs = config['training']['epochs']
+        self.full = config['training']['full']
         self.model = BERT_model(AutoModel.from_pretrained('bert-base-uncased'), n_class=len(self.datasets)).to(self.device)
         
     def check_if_trained(self):
+        print("lo")
         if os.path.exists('./models/'+str(self.name)+'/checkpoint.pt'):
             if click.confirm('Looks like model '+str(self.name)+' has been trained. Do you want to continue?'):
                 return False
@@ -99,9 +93,15 @@ def train_loop(dataset, model, lr, bs, epochs, savepath):
     return train_losses, train_counter
 
 
-        
-def main():
-    trainer = Trainer()
+@click.command()
+@click.argument('config_path',
+                type=click.Path(exists=True),
+                default='./config/config.yml') 
+def main(config_path):
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+
+    trainer = Trainer(config)
     print(trainer)
     print(trainer.check_if_trained())
 
@@ -109,8 +109,8 @@ def main():
 
 
 if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    logging.basicConfig(level=logging.INFO, format=log_fmt)
+    #log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    #logging.basicConfig(level=logging.INFO, format=log_fmt)
 
     # not used in this stub but often useful for finding various files
     #project_dir = Path(__file__).resolve().parents[2]
