@@ -40,7 +40,7 @@ class Trainer():
     def load_datasets(self, set_name):
         try:
             f = gzip.open(
-                './data/processed/' + str(self.name) + '/' + str(set_name) +
+                './data/processed/' + str(set_name) + # + str(self.name) + '/' 
                 '.pklz', 'rb')
             return pickle.load(f, encoding="bytes")
         except Exception as ex:
@@ -101,7 +101,7 @@ click.command()
 def main(config_path):
     with open(config_path) as f:
         config = yaml.safe_load(f)
-        
+
     trainer = Trainer(config)
     trainer.train()
 
