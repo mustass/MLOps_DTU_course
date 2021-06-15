@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from collections import namedtuple
 import click
 import logging
 from pathlib import Path
@@ -14,33 +15,30 @@ from sklearn.preprocessing import LabelEncoder
 from transformers import BertTokenizerFast
 import torch
 from torch.utils.data import TensorDataset
-from src.data.fetch_dataset import parse_datasets
+from src.data.fetch_dataset import check_and_create_data_subfolders, parse_datasets
 
 
 @click.command()
-@click.argument('config_datasets_path',
+@click.argument('config_path',
                 type=click.Path(exists=True),
                 default='./config/config.yml')
-def clean_data(config_datasets_path):
+def clean_data(config_path):
 
     load_dotenv(find_dotenv())
 
-    # Read the classes we use:
-
-    datasets = parse_datasets(config_datasets_path)
-    print("Using following datasets: {}".format(datasets))
-
     # Getting the rest of configs
-    with open(config_datasets_path) as f:
+    with open(config_path) as f:
         yml = yaml.safe_load(f)
-        raw_dataset_path = yml['data']['raw_data_path']
+        experiment_name = yml['experiment_name']
         seed = yml['seed']
         splits = yml['data']['train_val_test_splits']
         max_length = yml['data']['max_seq_length']
-        print("Loading data from:", raw_dataset_path, "...")
+        datasets = parse_datasets(yml)
+    print("Using following datasets: {}".format(datasets))
 
     # load raw csv file for given reviews at supplied path
-    df = check_and_download_raw(raw_dataset_path)
+    df = check_and_load_raw("data/raw/" + str(experiment_name) +
+                            "/AmazonProductReviews.csv")
 
     # drop any rows which have missing reviews, class or a class which is not in our class dict
 
@@ -109,12 +107,16 @@ def clean_data(config_datasets_path):
                               torch.tensor(tokens_test['attention_mask']),
                               torch.tensor(test_labels.tolist()))
 
-    pickle_TensorDataset(train_data, 'train')
-    pickle_TensorDataset(val_data, 'validate')
-    pickle_TensorDataset(test_data, 'test')
+    pickle_TensorDataset(train_data, experiment_name, 'train')
+    pickle_TensorDataset(val_data, experiment_name, 'validate')
+    pickle_TensorDataset(test_data, experiment_name, 'test')
+
+    with open('./data/processed/' + str(experiment_name) + '/datasets.txt',
+              'w') as f:
+        f.write(f'Used datasets: {datasets}')
 
 
-def check_and_download_raw(file):
+def check_and_load_raw(file):
 
     try:
         df = pd.read_csv(file,
@@ -122,7 +124,7 @@ def check_and_download_raw(file):
                          names=['review', 'class'])
         return df
     except Exception as ex:
-        if type(ex) == 'FileNotFoundError':
+        if type(ex) == FileNotFoundError:
             raise FileNotFoundError(
                 "The ./data/raw/" + str(file) +
                 "file does not exists. Fetch the dataset before contiunuing")
@@ -145,8 +147,12 @@ def check_splits(splits):
     return first, second
 
 
-def pickle_TensorDataset(dataset, name):
-    f = gzip.open('./data/processed/' + str(name) + '.pklz', 'wb')
+def pickle_TensorDataset(dataset, experiment_name, dataset_name):
+    check_and_create_data_subfolders('./data/processed/',
+                                     subfolders=[str(experiment_name)])
+    f = gzip.open(
+        './data/processed/' + str(experiment_name) + '/' + str(dataset_name) +
+        '.pklz', 'wb')
     pickle.dump(dataset, f)
     f.close()
 

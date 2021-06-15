@@ -69,29 +69,30 @@ def download_if_not_existing(datasets):
         for dataset in to_download:
             fetch_raw_dataset(dataset)
     except Exception as ex:
-        if type(ex) == 'FileNotFoundError':
+        if type(ex) == FileNotFoundError:
             raise FileNotFoundError(
                 "The ./data/ directory does not exists. Create it before moving on."
             )
 
 
-def check_and_create_data_subfolders():
-    subfolders = ['raw', 'interim', 'processed', 'external']
+def check_and_create_data_subfolders(
+        root='./data/',
+        subfolders=['raw', 'interim', 'processed', 'external']):
     for folder in subfolders:
-        if not os.path.exists('data/' + folder):
-            os.makedirs('data/' + folder)
+        if not os.path.exists(root + folder):
+            os.makedirs(root + folder)
 
 
-@click.command()
-@click.argument('config_datasets_path',
-                type=click.Path(exists=True),
-                default='./config/config.yml')
-def ensemble(config_datasets_path):
+def ensemble(config):
     check_and_create_data_subfolders()
-    datasets = parse_datasets(config_datasets_path)
+    datasets = parse_datasets(config)
+
+    name = config['experiment_name']
 
     download_if_not_existing(datasets)
-    f = open("data/raw/AmazonProductReviews.csv", "w")
+    check_and_create_data_subfolders("data/raw/", subfolders=[str(name)])
+
+    f = open("data/raw/" + str(name) + "/AmazonProductReviews.csv", "w")
     for filename in datasets:
         fetch_raw_dataset(filename)
         with open("data/interim/" + filename + ".csv") as subfile:
@@ -99,16 +100,18 @@ def ensemble(config_datasets_path):
 
         os.remove("data/interim/" + filename + ".csv")
 
+    with open("data/raw/" + str(name) + '/datasets.txt', 'w') as f:
+        f.write(f'Used datasets: {datasets}')
 
-def parse_datasets(config_datasets_path):
-    with open(config_datasets_path) as f:
-        flags = yaml.load(f)
-        flags = flags['data']['used_datasets']
+
+def parse_datasets(config):
+
+    flags = config['data']['used_datasets']
     try:
         datasets = [k for (k, v) in flags.items() if int(v) == 1]
     except ValueError:
-        raise ValueError("Insert only 0 (not wanted) or 1 (wanted) in file " +
-                         config_datasets_path)
+        raise ValueError(
+            "Insert only 0 (not wanted) or 1 (wanted) in the config file")
 
     return datasets
 
@@ -122,6 +125,16 @@ def shuffle_final_dataset():
         f.writelines(lines)
 
 
+@click.command()
+@click.argument('config_path',
+                type=click.Path(exists=True),
+                default='./config/config.yml')
+def main(config_path):
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+    ensemble(config)
+
+
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)
@@ -132,5 +145,4 @@ if __name__ == '__main__':
     # find .env automagically by walking up directories until it's found, then
     # load up the .env entries as environment variables
     load_dotenv(find_dotenv())
-
-    ensemble()
+    main()
