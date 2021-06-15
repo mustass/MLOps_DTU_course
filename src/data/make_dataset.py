@@ -15,7 +15,7 @@ from sklearn.preprocessing import LabelEncoder
 from transformers import BertTokenizerFast
 import torch
 from torch.utils.data import TensorDataset
-from src.data.fetch_dataset import check_and_create_data_subfolders, parse_datasets 
+from src.data.fetch_dataset import check_and_create_data_subfolders, parse_datasets
 
 
 @click.command()
@@ -37,7 +37,8 @@ def clean_data(config_path):
     print("Using following datasets: {}".format(datasets))
 
     # load raw csv file for given reviews at supplied path
-    df = check_and_load_raw("data/raw/"+ str(experiment_name)+"/AmazonProductReviews.csv")
+    df = check_and_load_raw("data/raw/" + str(experiment_name) +
+                            "/AmazonProductReviews.csv")
 
     # drop any rows which have missing reviews, class or a class which is not in our class dict
 
@@ -106,12 +107,12 @@ def clean_data(config_path):
                               torch.tensor(tokens_test['attention_mask']),
                               torch.tensor(test_labels.tolist()))
 
-    pickle_TensorDataset(train_data, experiment_name,'train')
-    pickle_TensorDataset(val_data, experiment_name ,'validate')
-    pickle_TensorDataset(test_data, experiment_name ,'test')
+    pickle_TensorDataset(train_data, experiment_name, 'train')
+    pickle_TensorDataset(val_data, experiment_name, 'validate')
+    pickle_TensorDataset(test_data, experiment_name, 'test')
 
-
-    with open('./data/processed/'+str(experiment_name)+'/datasets.txt', 'w') as f:
+    with open('./data/processed/' + str(experiment_name) + '/datasets.txt',
+              'w') as f:
         f.write(f'Used datasets: {datasets}')
 
 
@@ -147,8 +148,11 @@ def check_splits(splits):
 
 
 def pickle_TensorDataset(dataset, experiment_name, dataset_name):
-    check_and_create_data_subfolders('./data/processed/', subfolders=[str(experiment_name)])
-    f = gzip.open('./data/processed/'+str(experiment_name)+'/' + str(dataset_name) + '.pklz', 'wb')
+    check_and_create_data_subfolders('./data/processed/',
+                                     subfolders=[str(experiment_name)])
+    f = gzip.open(
+        './data/processed/' + str(experiment_name) + '/' + str(dataset_name) +
+        '.pklz', 'wb')
     pickle.dump(dataset, f)
     f.close()
 

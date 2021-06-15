@@ -75,35 +75,32 @@ def download_if_not_existing(datasets):
             )
 
 
-def check_and_create_data_subfolders(root = './data/',subfolders =['raw', 'interim', 'processed', 'external']):
+def check_and_create_data_subfolders(
+        root='./data/',
+        subfolders=['raw', 'interim', 'processed', 'external']):
     for folder in subfolders:
         if not os.path.exists(root + folder):
             os.makedirs(root + folder)
 
 
-
-
 def ensemble(config):
     check_and_create_data_subfolders()
     datasets = parse_datasets(config)
-    
 
     name = config['experiment_name']
 
-
     download_if_not_existing(datasets)
     check_and_create_data_subfolders("data/raw/", subfolders=[str(name)])
-    
-    f = open("data/raw/"+ str(name)+"/AmazonProductReviews.csv", "w")
+
+    f = open("data/raw/" + str(name) + "/AmazonProductReviews.csv", "w")
     for filename in datasets:
         fetch_raw_dataset(filename)
         with open("data/interim/" + filename + ".csv") as subfile:
             f.write(subfile.read())
 
         os.remove("data/interim/" + filename + ".csv")
-    
 
-    with open("data/raw/"+ str(name)+'/datasets.txt', 'w') as f:
+    with open("data/raw/" + str(name) + '/datasets.txt', 'w') as f:
         f.write(f'Used datasets: {datasets}')
 
 
@@ -113,7 +110,8 @@ def parse_datasets(config):
     try:
         datasets = [k for (k, v) in flags.items() if int(v) == 1]
     except ValueError:
-        raise ValueError("Insert only 0 (not wanted) or 1 (wanted) in the config file")
+        raise ValueError(
+            "Insert only 0 (not wanted) or 1 (wanted) in the config file")
 
     return datasets
 
@@ -126,16 +124,16 @@ def shuffle_final_dataset():
     with open("data/raw/AmazonProductReviews.csv", "w") as f:
         f.writelines(lines)
 
+
 @click.command()
 @click.argument('config_path',
                 type=click.Path(exists=True),
                 default='./config/config.yml')
-
 def main(config_path):
     with open(config_path) as f:
         config = yaml.safe_load(f)
     ensemble(config)
-    
+
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -148,4 +146,3 @@ if __name__ == '__main__':
     # load up the .env entries as environment variables
     load_dotenv(find_dotenv())
     main()
-    

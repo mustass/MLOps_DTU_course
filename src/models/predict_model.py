@@ -11,14 +11,14 @@ from src.models.model import BERT_model
 from src.data.fetch_dataset import parse_datasets
 from transformers import AutoModel
 
+
 @click.command()
 @click.argument('config_path',
                 type=click.Path(exists=True),
                 default='./config/config.yml')
-
 class Predictor(object):
     def __init__(self, config_path):
-        
+
         with open(config_path) as f:
             yml = yaml.safe_load(f)
             self.device = yml['device']
@@ -26,20 +26,21 @@ class Predictor(object):
             self.datasets = parse_datasets(config_path)
 
         self.predicted = False
-        self.model = BERT_model(AutoModel.from_pretrained('bert-base-uncased'), n_class=len(self.datasets)).to(self.device)
-        
+        self.model = BERT_model(AutoModel.from_pretrained('bert-base-uncased'),
+                                n_class=len(self.datasets)).to(self.device)
+
         try:
-            self.model.load_state_dict(torch.load('./models/'+str(self.name)+'/checkpoint.pt'))
+            self.model.load_state_dict(
+                torch.load('./models/' + str(self.name) + '/checkpoint.pt'))
         except Exception as ex:
             if type(ex) == FileNotFoundError:
                 print("lol2")
                 raise FileNotFoundError(
-                "The model checkpoint could not be found in './models/"+str(self.name)+"/'. Train this model or select another one.")
-        print(str(self.name)+' model weights loaded successfully!')
+                    "The model checkpoint could not be found in './models/" +
+                    str(self.name) +
+                    "/'. Train this model or select another one.")
+        print(str(self.name) + ' model weights loaded successfully!')
         self.model.eval()
-
-
-
 
     def run_predictions(self):
         """
@@ -55,23 +56,16 @@ class Predictor(object):
         # show model's performance
         preds = np.argmax(preds, axis=1)
         print(classification_report(test_y, preds))
-        cm = confusion_matrix(test_y,
-                              preds)  # labels=['Automotive', 'Patio_Lawn_and_Garden']
+        cm = confusion_matrix(
+            test_y, preds)  # labels=['Automotive', 'Patio_Lawn_and_Garden']
         print('Confusion Matrix: \n', cm)
 
         self.predicted = True
 
-    
     def create_stats(self):
-
         """
         Will log stuff based on predictions
         """
-
-        
-
-        
-
 
 
 if __name__ == '__main__':
@@ -85,4 +79,3 @@ if __name__ == '__main__':
     # load up the .env entries as environment variables
     load_dotenv(find_dotenv())
     Predictor()
-
