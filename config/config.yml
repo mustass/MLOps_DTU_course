@@ -43,12 +43,11 @@ training:
 prediction:
 
 compute:
-  azure: { # if local is provided, all this is ignored. If azure is provided, they are used.
-    subscription_id: "dcb1598f-693c-460c-8648-667de51a2475",
-    resource_group: "myResourceGroup",
-    workspace_name: "s202798Workspace",
-    compute_target: "s202798Compute",
-    environment_name: "CoolName",
-    experiment_name: "ExperimentName",
-    location: "northeurope"
-  }
+    cloud: true # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
+    subscription_id: "<your-subscription-id>"
+    resource_group: "<your-resource-group>"
+    workspace_name: "<your-ws-name"
+    compute_target: "<your-compute-name"
+    environment_name: "<your-exp-name>"
+    experiment_name: "<experiment-name>"
+  

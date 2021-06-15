@@ -10,24 +10,22 @@ def run(config_file="./config/config.yml"):
 
     with open(config_file) as f:
         flags = yaml.safe_load(f)
-
-    if flags['compute'] == 'local':
+    if not flags['compute']['cloud'] :
         pass # TODO: implement this
-    elif flags['compute'] == 'azure':
+    elif flags['compute']['cloud']:
         setup = flags['compute']
-        ws = Workspace.create(name=setup['workspace_name'],
+        ws = Workspace.get(name=setup['workspace_name'],
                subscription_id=setup['subscription_id'],
-               resource_group=setup['resource_group'],
-               location=setup['location']
+               resource_group=setup['resource_group']
                )
         #ws = Workspace.from_config("config/azure_conf.json")
         env = Environment.from_pip_requirements(setup['environment_name'], 'requirements.txt')
         experiment = Experiment(workspace=ws, name=setup['experiment_name'])
 
-        #args = ["train", "--config", "config/train_conf.json"]
+        args = [config_file]
         config = ScriptRunConfig(source_directory='.',
-                                script='src/models/main.py', # TODO: change this
-                                #arguments=args,
+                                script='src/models/train_model.py',
+                                arguments=args,
                                 compute_target=setup['compute_target'],
                                 environment=env)
 

@@ -27,7 +27,7 @@ azureml-train-core==1.30.0
 azureml-train-restclients-hyperdrive==1.30.0
 backports.tempfile==1.0
 backports.weakref==1.0.post1
-certifi==2021.5.30
+certifi
 cffi==1.14.5
 chardet==4.0.0
 click==8.0.1
@@ -52,10 +52,10 @@ msal-extensions==0.2.2
 msrest==0.6.21
 msrestazure==0.6.4
 ndg-httpsclient==0.5.1
-numpy==1.20.3
+numpy
 oauthlib==3.1.1
 packaging==20.9
-pandas==1.2.4
+pandas
 path==15.1.2
 pathspec==0.8.1
 pickle5==0.0.11
@@ -78,7 +78,7 @@ ruamel.yaml==0.17.4
 ruamel.yaml.clib==0.2.2
 sacremoses==0.0.45
 scikit-learn==0.24.2
-scipy==1.6.3
+scipy
 SecretStorage==3.3.1
 six==1.16.0
 -e git+https://github.com/stas97/transformers-group-octupus.git@99875746c245d48655b5790ab46fd8f5f89e96aa#egg=src
