@@ -40,7 +40,7 @@ class Trainer():
     def load_datasets(self, set_name):
         try:
             f = gzip.open(
-                './data/processed/' + str(self.name) + '/' + str(set_name) +
+                './data/processed/' + str(set_name) + # + str(self.name) + '/' 
                 '.pklz', 'rb')
             return pickle.load(f, encoding="bytes")
         except Exception as ex:
@@ -49,10 +49,10 @@ class Trainer():
                     "The datasets could not be found in './data/processed/" +
                     str(self.name) + "/'.")
 
-    def train(self, full=False):
+    def train(self):
         self.trained = self.check_if_trained()
         train_set = self.load_datasets("train")
-        if not full:
+        if not self.full:
             for param in self.bert.parameters():
                 param.requires_grad = False
 
@@ -94,7 +94,7 @@ def train_loop(dataset, model, lr, bs, epochs, device, savepath):
     return train_losses, train_counter
 
 
-@click.command()
+click.command()
 @click.argument('config_path',
                 type=click.Path(exists=True),
                 default='./config/config.yml')
@@ -103,7 +103,7 @@ def main(config_path):
         config = yaml.safe_load(f)
 
     trainer = Trainer(config)
-    trainer.train(config['training']['full'])
+    trainer.train()
 
 
 if __name__ == '__main__':

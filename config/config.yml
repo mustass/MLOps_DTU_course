@@ -41,3 +41,15 @@ training:
   full: false        # Whether we train the whole BART architecture or only our outer layers
 
 prediction:
+
+compute:
+    cloud: false # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
+    subscription_id: "<your-subscription-id>"
+    resource_group: "<your-resource-group>"
+    workspace_name: "<your-ws-name>"
+    workspace_exists: true
+    location: "northeurope" # ignored if workspace_exists is true
+    compute_target: "<your-compute-name>"
+    environment_name: "<your-exp-name>"
+    experiment_name: "<experiment-name>"
+  
