@@ -49,6 +49,14 @@ def run(ctx, config_file="./config/config.yml"):
         #print(aml_url)
         run.wait_for_completion()
 
+        # model registration
+
+        run.register_model(model_path='/models/'+config['experiment_name']+'/model.pth', 
+                            model_name=config['experiment_name'],
+                            tags={'Tag1':'Tag1 Value'},
+                            properties={'Accuracy': run.get_metrics()['Accuracy']})
+
+
 
 if __name__ == "__main__":
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
