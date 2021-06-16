@@ -13,13 +13,13 @@ def get_workspace(setup):
                              resource_group=setup['resource_group'])
     if not setup['workspace_exists']:
         return Workspace.create(name=setup['workspace_name'],
-               subscription_id=setup['subscription_id'],
-               resource_group=setup['resource_group'],
-               create_resource_group=True,
-               location=setup['location']
-               )
-    
-    raise ValueError("workspace_exists in YML file is supposed to be a boolean (true/false)")
+                                subscription_id=setup['subscription_id'],
+                                resource_group=setup['resource_group'],
+                                create_resource_group=True,
+                                location=setup['location'])
+
+    raise ValueError(f"workspace_exists in YML file is supposed" +
+                     "to be a boolean (true/false)")
 
 @click.command()
 @click.argument('config_file', type=click.Path(exists=True))
