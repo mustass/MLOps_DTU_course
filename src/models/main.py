@@ -19,8 +19,7 @@ def get_workspace(setup):
                location=setup['location']
                )
     
-    raise ValueError(f"workspace_exists in YML file is supposed" +
-                        "to be a boolean (true/false)")
+    raise ValueError("workspace_exists in YML file is supposed to be a boolean (true/false)")
 
 @click.command()
 @click.argument('config_file', type=click.Path(exists=True))
@@ -29,16 +28,15 @@ def run(ctx, config_file="./config/config.yml"):
 
     with open(config_file) as f:
         flags = yaml.safe_load(f)
-    if not flags['compute']['cloud'] :
+    if not flags['compute']['cloud']:
         ctx.forward(start_training(config_file))
     elif flags['compute']['cloud']:
         setup = flags['compute']
         ws = get_workspace(setup)
-        #ws = Workspace.from_config("config/azure_conf.json")
         env = Environment.from_pip_requirements(setup['environment_name'],
                                                  'requirements.txt')
         experiment = Experiment(workspace=ws, name=setup['experiment_name'])
-
+        
         args = [config_file]
         config = ScriptRunConfig(source_directory='.',
                                 script='src/models/train_model.py',
