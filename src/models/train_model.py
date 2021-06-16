@@ -3,6 +3,7 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 from src.models.model import BERT_model
 from src.data.lightning_data_module import MyDataModule
+from pytorch_lightning.loggers import TensorBoardLogger
 from src.data.fetch_dataset import parse_datasets
 from transformers import AutoModel
 import click, logging, yaml
@@ -29,9 +30,10 @@ def train(config):
     dirpath='./models/checkpoints',
     filename=name+'-{epoch:02d}-{val_loss:.2f}',
     save_top_k=3,
-    mode='min',
-)
-    trainer = Trainer(max_epochs =epochs,callbacks=[checkpoint_callback])
+    mode='min')
+
+    logger = TensorBoardLogger("tb_logs", name=name)   
+    trainer = Trainer(logger =logger ,max_epochs =epochs,callbacks=[checkpoint_callback])
     trainer.fit(model, data)
 
 
