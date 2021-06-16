@@ -1,3 +1,5 @@
+-e git+https://github.com/stas97/transformers-group-octupus.git@99875746c245d48655b5790ab46fd8f5f89e96aa#egg=src
+
 adal==1.2.7
 applicationinsights==0.11.10
 azure-common==1.1.27
@@ -81,7 +83,6 @@ scikit-learn==0.24.2
 scipy
 SecretStorage==3.3.1
 six==1.16.0
--e git+https://github.com/stas97/transformers-group-octupus.git@99875746c245d48655b5790ab46fd8f5f89e96aa#egg=src
 threadpoolctl==2.1.0
 tokenizers==0.10.3
 torch==1.8.1
@@ -90,3 +91,4 @@ transformers==4.6.1
 typing-extensions==3.10.0.0
 urllib3==1.26.5
 websocket-client==1.1.0
+wandb

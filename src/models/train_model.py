@@ -31,12 +31,12 @@ def train(config):
     save_top_k=3,
     mode='min')
 
-    logger = WandbLogger("wandb_logs", name=name)   
+    logger = WandbLogger(name=name)   
     trainer = Trainer(logger =logger ,max_epochs =epochs,callbacks=[checkpoint_callback])
     trainer.fit(model, data)
 
 
-click.command()
+@click.command()
 @click.argument('config_path',
                 type=click.Path(exists=True),
                 default='./config/config.yml')

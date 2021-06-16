@@ -1,4 +1,4 @@
-experiment_name: monki-see-monki-do # This is done so that we can always find models and their corresponding datasets
+experiment_name: monki-see-monki-sleep # This is done so that we can always find models and their corresponding datasets
 
 data:
   train_val_test_splits: [0.6,0.2,0.2]
@@ -24,7 +24,7 @@ data:
                   "Automotive": 0,
                   "Grocery_and_Gourmet_Food": 0,
                   "Patio_Lawn_and_Garden": 0,
-                  "Baby": 0,
+                  "Baby": 1,
                   "Digital_Music": 1,
                   "Musical_Instruments": 1,
                   "Amazon_Instant_Video": 0
