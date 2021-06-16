@@ -1,13 +1,19 @@
-import torch.nn as nn
+from torch import nn
+from pytorch_lightning.core.lightning import LightningModule
+from torch._C import layout
+from torch.nn import functional as F
+from torch.optim import Adam
+import torch
+import numpy as np
 
-
-class BERT_model(nn.Module):
-    def __init__(self, bert, n_class=2):
-        super(BERT_model, self).__init__()
+class BERT_model(LightningModule):
+    def __init__(self, bert, n_class, lr):
+        super().__init__()
         self.bert = bert
         self.n_class = n_class
+        self.lr = lr
 
-        # dropout layer
+        # dropout layers
         self.dropout = nn.Dropout(0.1)
         # relu activation function
         self.relu = nn.ReLU()
@@ -31,3 +37,35 @@ class BERT_model(nn.Module):
         x = self.softmax(x)
 
         return x
+
+    def training_step(self, batch, batch_idx):
+        dat, mask, label = batch
+        logits = self(dat,mask)
+        loss = F.nll_loss(logits,label)
+        self.log("train_Loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        return {"loss":loss, "outputs":logits, "labels":label}
+
+    #def training_epoch_end(self, logits, label):
+    #
+    #    ps = torch.exp(logits)
+    #    top_p, top_class = ps.topk(1, dim=1)
+    #    equals = top_class == label.view(*top_class.shape)
+    #    accuracy = torch.mean(equals.type(torch.FloatTensor))
+    #
+    #    accuracy = accuracy / len(label)
+    #    self.log(f'Test accuracy: {accuracy.item()*100}%',on_epoch=True, logger=True)    
+
+    def validation_step(self, batch, batch_idx):
+        dat, mask, label = batch
+        logits = self(dat,mask)
+        loss = F.nll_loss(logits,label)
+        self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+    
+    def test_step(self, batch, batch_idx):
+        dat, mask, label = batch
+        logits = self(dat,mask)
+        loss = F.nll_loss(logits,label)
+        self.log("test_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+
+    def configure_optimizers(self):
+        return Adam(self.parameters(), lr=self.lr)

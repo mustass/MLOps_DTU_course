@@ -4,7 +4,9 @@ import click
 import logging
 from pathlib import Path
 import pickle
-import gzip
+import gzip, warnings
+
+from torch.utils import data
 from dotenv import find_dotenv, load_dotenv
 import yaml
 
@@ -18,27 +20,33 @@ from torch.utils.data import TensorDataset
 from src.data.fetch_dataset import check_and_create_data_subfolders, parse_datasets
 
 
-@click.command()
-@click.argument('config_path',
-                type=click.Path(exists=True),
-                default='./config/config.yml')
-def clean_data(config_path):
+def clean_data(config):
 
     load_dotenv(find_dotenv())
 
     # Getting the rest of configs
-    with open(config_path) as f:
-        yml = yaml.safe_load(f)
-        experiment_name = yml['experiment_name']
-        seed = yml['seed']
-        splits = yml['data']['train_val_test_splits']
-        max_length = yml['data']['max_seq_length']
-        datasets = parse_datasets(yml)
+    experiment_name = config['experiment_name']
+    seed = config['seed']
+    splits = config['data']['train_val_test_splits']
+    max_length = config['data']['max_seq_length']
+    datasets = parse_datasets(config)
     print("Using following datasets: {}".format(datasets))
 
     # load raw csv file for given reviews at supplied path
     df = check_and_load_raw("data/raw/" + str(experiment_name) +
                             "/AmazonProductReviews.csv")
+
+    try:
+        f = gzip.open(
+                './data/processed/' + str(config['experiment_name']) + '/used_datasets.pklz', 'rb')
+        existing_datasets = pickle.load(f, encoding="bytes")
+        if existing_datasets == datasets:
+            print("Datasets are allready prepared!:)")
+            return
+    except Exception as ex:
+        print('Generating new datasets...')
+        pass
+
 
     # drop any rows which have missing reviews, class or a class which is not in our class dict
 
@@ -111,10 +119,10 @@ def clean_data(config_path):
     pickle_TensorDataset(val_data, experiment_name, 'validate')
     pickle_TensorDataset(test_data, experiment_name, 'test')
 
-    with open('./data/processed/' + str(experiment_name) + '/datasets.txt',
-              'w') as f:
-        f.write(f'Used datasets: {datasets}')
-
+    f = gzip.open(
+        './data/processed/' + str(experiment_name) + '/used_datasets.pklz', 'wb')
+    pickle.dump(datasets, f)
+    f.close()
 
 def check_and_load_raw(file):
 
@@ -157,6 +165,17 @@ def pickle_TensorDataset(dataset, experiment_name, dataset_name):
     f.close()
 
 
+@click.command()
+@click.argument('config_path',
+                type=click.Path(exists=True),
+                default='./config/config.yml')
+def main(config_path):
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+    clean_data(config)
+
+
+
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)
@@ -165,4 +184,4 @@ if __name__ == '__main__':
     # find .env automagically by walking up directories until it's found, then
     #load up the .env entries as environment variables
     load_dotenv(find_dotenv())
-    clean_data()
+    main()
