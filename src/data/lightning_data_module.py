@@ -8,12 +8,12 @@ from dotenv import load_dotenv, find_dotenv
 
 # This is hackidy-hacky:
 import os
+
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 # Hackidy hack over ¯\_(ツ)_/¯
 
 
 class MyDataModule(LightningDataModule):
-
     def __init__(self, config):
         super().__init__()
         self.train_dims = None
@@ -26,24 +26,29 @@ class MyDataModule(LightningDataModule):
     def setup(self, stage: Optional[str] = None):
         # called on every GPU
         self.train = self.load_datasets("train")
-        self.val   = self.load_datasets("validate")
-        self.test  = self.load_datasets("test")
+        self.val = self.load_datasets("validate")
+        self.test = self.load_datasets("test")
 
     def train_dataloader(self):
-        return DataLoader(self.train, batch_size=self.config['training']['batch_size'], num_workers= self.config['training']['num_workers'])
+        return DataLoader(self.train,
+                          batch_size=self.config['training']['batch_size'],
+                          num_workers=self.config['training']['num_workers'])
 
     def val_dataloader(self):
-        return DataLoader(self.val, batch_size=self.config['training']['batch_size'], num_workers= self.config['training']['num_workers'])
+        return DataLoader(self.val,
+                          batch_size=self.config['training']['batch_size'],
+                          num_workers=self.config['training']['num_workers'])
 
     def test_dataloader(self):
-        return DataLoader(self.test, batch_size=self.config['training']['batch_size'],num_workers= self.config['training']['num_workers'])
+        return DataLoader(self.test,
+                          batch_size=self.config['training']['batch_size'],
+                          num_workers=self.config['training']['num_workers'])
 
-    
     def load_datasets(self, set_name):
         try:
             f = gzip.open(
-                './data/processed/' + str(self.config['experiment_name']) + '/' + str(set_name) +
-                '.pklz', 'rb')
+                './data/processed/' + str(self.config['experiment_name']) +
+                '/' + str(set_name) + '.pklz', 'rb')
             return pickle.load(f, encoding="bytes")
         except Exception as ex:
             if type(ex) == FileNotFoundError:

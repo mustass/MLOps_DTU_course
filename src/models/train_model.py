@@ -8,6 +8,7 @@ from transformers import AutoModel
 import click, logging, yaml
 from dotenv import load_dotenv, find_dotenv
 
+
 def train(config):
     name = config['experiment_name']
     datasets = parse_datasets(config)
@@ -20,19 +21,21 @@ def train(config):
         for param in bert.parameters():
             param.requires_grad = False
 
-    model = BERT_model(bert, n_class=len(datasets),lr=lr)
+    model = BERT_model(bert, n_class=len(datasets), lr=lr)
 
     data = MyDataModule(config)
-    
-    checkpoint_callback = ModelCheckpoint(
-    monitor='val_loss',
-    dirpath='./models/checkpoints',
-    filename=name+'-{epoch:02d}-{val_loss:.2f}',
-    save_top_k=3,
-    mode='min')
 
-    logger = WandbLogger(name=name)   
-    trainer = Trainer(logger =logger ,max_epochs =epochs,callbacks=[checkpoint_callback])
+    checkpoint_callback = ModelCheckpoint(monitor='val_loss',
+                                          dirpath='./models/checkpoints',
+                                          filename=name +
+                                          '-{epoch:02d}-{val_loss:.2f}',
+                                          save_top_k=3,
+                                          mode='min')
+
+    logger = WandbLogger(name=name)
+    trainer = Trainer(logger=logger,
+                      max_epochs=epochs,
+                      callbacks=[checkpoint_callback])
     trainer.fit(model, data)
 
 
@@ -44,7 +47,6 @@ def main(config_path):
     with open(config_path) as f:
         config = yaml.safe_load(f)
     train(config)
-
 
 
 if __name__ == '__main__':

@@ -6,6 +6,7 @@ from torch.optim import Adam
 import torch
 import numpy as np
 
+
 class BERT_model(LightningModule):
     def __init__(self, bert, n_class, lr):
         super().__init__()
@@ -40,10 +41,15 @@ class BERT_model(LightningModule):
 
     def training_step(self, batch, batch_idx):
         dat, mask, label = batch
-        logits = self(dat,mask)
-        loss = F.nll_loss(logits,label)
-        self.log("train_Loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        return {"loss":loss, "outputs":logits, "labels":label}
+        logits = self(dat, mask)
+        loss = F.nll_loss(logits, label)
+        self.log("train_Loss",
+                 loss,
+                 on_step=True,
+                 on_epoch=True,
+                 prog_bar=True,
+                 logger=True)
+        return {"loss": loss, "outputs": logits, "labels": label}
 
     #def training_epoch_end(self, logits, label):
     #
@@ -53,19 +59,29 @@ class BERT_model(LightningModule):
     #    accuracy = torch.mean(equals.type(torch.FloatTensor))
     #
     #    accuracy = accuracy / len(label)
-    #    self.log(f'Test accuracy: {accuracy.item()*100}%',on_epoch=True, logger=True)    
+    #    self.log(f'Test accuracy: {accuracy.item()*100}%',on_epoch=True, logger=True)
 
     def validation_step(self, batch, batch_idx):
         dat, mask, label = batch
-        logits = self(dat,mask)
-        loss = F.nll_loss(logits,label)
-        self.log("val_loss", loss, on_step=False ,on_epoch=True, prog_bar=True, logger=True)
-    
+        logits = self(dat, mask)
+        loss = F.nll_loss(logits, label)
+        self.log("val_loss",
+                 loss,
+                 on_step=False,
+                 on_epoch=True,
+                 prog_bar=True,
+                 logger=True)
+
     def test_step(self, batch, batch_idx):
         dat, mask, label = batch
-        logits = self(dat,mask)
-        loss = F.nll_loss(logits,label)
-        self.log("test_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        logits = self(dat, mask)
+        loss = F.nll_loss(logits, label)
+        self.log("test_loss",
+                 loss,
+                 on_step=False,
+                 on_epoch=True,
+                 prog_bar=True,
+                 logger=True)
 
     def configure_optimizers(self):
         return Adam(self.parameters(), lr=self.lr)

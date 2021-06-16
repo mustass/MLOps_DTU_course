@@ -38,7 +38,8 @@ def clean_data(config):
 
     try:
         f = gzip.open(
-                './data/processed/' + str(config['experiment_name']) + '/used_datasets.pklz', 'rb')
+            './data/processed/' + str(config['experiment_name']) +
+            '/used_datasets.pklz', 'rb')
         existing_datasets = pickle.load(f, encoding="bytes")
         if existing_datasets == datasets:
             print("Datasets are allready prepared!:)")
@@ -46,7 +47,6 @@ def clean_data(config):
     except Exception as ex:
         print('Generating new datasets...')
         pass
-
 
     # drop any rows which have missing reviews, class or a class which is not in our class dict
 
@@ -120,9 +120,11 @@ def clean_data(config):
     pickle_TensorDataset(test_data, experiment_name, 'test')
 
     f = gzip.open(
-        './data/processed/' + str(experiment_name) + '/used_datasets.pklz', 'wb')
+        './data/processed/' + str(experiment_name) + '/used_datasets.pklz',
+        'wb')
     pickle.dump(datasets, f)
     f.close()
+
 
 def check_and_load_raw(file):
 
@@ -173,7 +175,6 @@ def main(config_path):
     with open(config_path) as f:
         config = yaml.safe_load(f)
     clean_data(config)
-
 
 
 if __name__ == '__main__':
