@@ -93,3 +93,10 @@ target/
 
 # All profile files as well
 *.prof
+
+# Lightning logs
+lightning_logs/
+
+# Tensorboard logs
+tb_logs/
+wandb/
