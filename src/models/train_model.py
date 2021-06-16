@@ -32,7 +32,7 @@ def train(config):
     save_top_k=3,
     mode='min')
 
-    logger = WandbLogger("wandb_logs", name=name)   
+    logger = WandbLogger("wandb_logs_"+name)   
     trainer = Trainer(logger =logger ,max_epochs =epochs,callbacks=[checkpoint_callback])
     trainer.fit(model, data)
 
