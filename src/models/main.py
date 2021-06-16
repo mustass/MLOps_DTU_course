@@ -34,11 +34,10 @@ def run(ctx, config_file="./config/config.yml"):
     elif flags['compute']['cloud']:
         setup = flags['compute']
         ws = get_workspace(setup)
-        #ws = Workspace.from_config("config/azure_conf.json")
         env = Environment.from_pip_requirements(setup['environment_name'],
                                                 'requirements.txt')
         experiment = Experiment(workspace=ws, name=setup['experiment_name'])
-
+        
         args = [config_file]
         config = ScriptRunConfig(source_directory='.',
                                  script='src/models/train_model.py',
