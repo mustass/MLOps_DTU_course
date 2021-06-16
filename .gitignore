@@ -96,3 +96,6 @@ target/
 
 # Lightning logs
 lightning_logs/
+
+# Tensorboard logs
+tb_logs/
