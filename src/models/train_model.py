@@ -1,4 +1,3 @@
-from typing import MutableMapping
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 from src.models.model import BERT_model
