@@ -26,7 +26,7 @@ def train(config):
     
     checkpoint_callback = ModelCheckpoint(
     monitor='val_loss',
-    dirpath='../models/logs',
+    dirpath='./models/checkpoints',
     filename=name+'-{epoch:02d}-{val_loss:.2f}',
     save_top_k=3,
     mode='min',

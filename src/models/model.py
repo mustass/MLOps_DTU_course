@@ -59,7 +59,7 @@ class BERT_model(LightningModule):
         dat, mask, label = batch
         logits = self(dat,mask)
         loss = F.nll_loss(logits,label)
-        self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log("val_loss", loss, on_step=False ,on_epoch=True, prog_bar=True, logger=True)
     
     def test_step(self, batch, batch_idx):
         dat, mask, label = batch
