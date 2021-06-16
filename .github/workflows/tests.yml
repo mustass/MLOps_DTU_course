@@ -2,7 +2,7 @@ name: "Run tests"
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, dev_marco ]
   pull_request:
     branches: [ main, master ]
 
@@ -14,10 +14,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Set up Python 3.9
+    - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: 3.7
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -26,4 +26,4 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        pytest -v
+        pytest tests/

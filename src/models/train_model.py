@@ -36,8 +36,7 @@ def train(config):
     trainer.fit(model, data)
 
 
-
-@click.command()
+click.command()
 @click.argument('config_path',
                 type=click.Path(exists=True),
                 default='./config/config.yml')
