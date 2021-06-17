@@ -1,6 +1,7 @@
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 from src.models.model import BERT_model
+from transformers import AutoModel
 from src.data.lightning_data_module import MyDataModule
 from pytorch_lightning.loggers import WandbLogger
 from src.data.fetch_dataset import parse_datasets
@@ -18,7 +19,13 @@ def train(config):
     full = config['training']['full']
     cloud = config['compute']['cloud']
 
-    model = BERT_model(full,n_class=len(datasets), lr=lr)
+    bert = AutoModel.from_pretrained('bert-base-uncased')
+
+    if not full:
+        for param in bert.parameters():
+            param.requires_grad = False
+
+    model = BERT_model(bert, n_class=len(datasets), lr=lr)
 
     data = MyDataModule(config)
 
@@ -40,14 +47,18 @@ def train(config):
 
     # model registration
     if cloud:
+        print("\nRegistering the model...")
         best_model_path = checkpoint_callback.best_model_path
         run = Run.get_context()
-        run.register_model(model_path=best_model_path, 
+        run.upload_file(name = './models/' + name, 
+                path_or_stream = best_model_path)
+        run.register_model(model_path='./models/'+ name, 
                             model_name=name)
 
-
-def main(config_path):
-    with open(config_path) as f:
+@click.command()
+@click.argument('config_file', default="./config/config.yml")
+def main(config_file):
+    with open(config_file) as f:
         config = yaml.safe_load(f)
     train(config)
 
