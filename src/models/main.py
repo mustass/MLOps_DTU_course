@@ -13,32 +13,32 @@ def get_workspace(setup):
                              resource_group=setup['resource_group'])
     if not setup['workspace_exists']:
         return Workspace.create(name=setup['workspace_name'],
-                                subscription_id=setup['subscription_id'],
-                                resource_group=setup['resource_group'],
-                                create_resource_group=True,
-                                location=setup['location'])
+               subscription_id=setup['subscription_id'],
+               resource_group=setup['resource_group'],
+               create_resource_group=True,
+               location=setup['location']
+               )
 
     raise ValueError(f"workspace_exists in YML file is supposed" +
                      "to be a boolean (true/false)")
 
-
+cli = click.Group()
 @click.command()
-@click.argument('config_file', type=click.Path(exists=True))
+@click.argument('config_file', default="./config/config.yml")
 @click.pass_context
-def run(ctx, config_file="./config/config.yml"):
+def run(ctx, config_file):
 
     with open(config_file) as f:
         flags = yaml.safe_load(f)
     if not flags['compute']['cloud']:
-        ctx.forward(start_training(config_file))
+        start_training(config_file)
     elif flags['compute']['cloud']:
         setup = flags['compute']
         ws = get_workspace(setup)
-        #ws = Workspace.from_config("config/azure_conf.json")
         env = Environment.from_pip_requirements(setup['environment_name'],
                                                 'requirements.txt')
-        experiment = Experiment(workspace=ws, name=setup['experiment_name'])
-
+        experiment = Experiment(workspace=ws, name=flags['experiment_name'])
+        
         args = [config_file]
         config = ScriptRunConfig(source_directory='.',
                                  script='src/models/train_model.py',
@@ -52,6 +52,7 @@ def run(ctx, config_file="./config/config.yml"):
         run.wait_for_completion()
 
 
+        
 if __name__ == "__main__":
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)

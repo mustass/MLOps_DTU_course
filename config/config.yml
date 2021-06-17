@@ -32,25 +32,25 @@ data:
 
 seed: 7
 
-gpus: 0 # Choose -1 for all available
+gpus: -1 # Choose -1 for all available
 
 training:
   batch_size: 64     # Batch size
   lr: 0.02           # Learning rate
-  max_epochs: 3
+  max_epochs: 1
   full: false        # Whether we train the whole BART architecture or only our outer layers
-  num_workers: 16
+  num_workers: 6
 
 prediction:
 
 compute:
-    cloud: false # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
-    subscription_id: "<your-subscription-id>"
-    resource_group: "<your-resource-group>"
-    workspace_name: "<your-ws-name>"
+    cloud: true # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
+    subscription_id: "dcb1598f-693c-460c-8648-667de51a2475"
+    resource_group: "myResourceGroup"
+    workspace_name: "s202798Workspace"
     workspace_exists: true
     location: "northeurope" # ignored if workspace_exists is true
-    compute_target: "<your-compute-name>"
-    environment_name: "<your-exp-name>"
-    experiment_name: "<experiment-name>"
+    compute_target: "s202798Compute-GPU"
+    environment_name: "myEnvironment"
   
+wandbkey: "33f3c65ab2fd849f6c70cc9f40a93f6b63bf7243"

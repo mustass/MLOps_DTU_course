@@ -6,6 +6,8 @@ from pytorch_lightning.loggers import WandbLogger
 from src.data.fetch_dataset import parse_datasets
 import click, logging, yaml
 from dotenv import load_dotenv, find_dotenv
+from azureml.core import Run
+import wandb
 
 
 def train(config):
@@ -14,7 +16,7 @@ def train(config):
     lr = config['training']['lr']
     epochs = config['training']['max_epochs']
     full = config['training']['full']
-
+    cloud = config['compute']['cloud']
 
     model = BERT_model(full,n_class=len(datasets), lr=lr)
 
@@ -27,18 +29,23 @@ def train(config):
                                           save_top_k=3,
                                           mode='min')
 
+    wandb.login(key=config['wandbkey'])
     logger = WandbLogger(name=name)
     trainer = Trainer(logger=logger,
                       max_epochs=epochs,
                       callbacks=[checkpoint_callback],
                       gpus = config['gpus'])
+
     trainer.fit(model, data)
 
+    # model registration
+    if cloud:
+        best_model_path = checkpoint_callback.best_model_path
+        run = Run.get_context()
+        run.register_model(model_path=best_model_path, 
+                            model_name=name)
 
-@click.command()
-@click.argument('config_path',
-                type=click.Path(exists=True),
-                default='./config/config.yml')
+
 def main(config_path):
     with open(config_path) as f:
         config = yaml.safe_load(f)
