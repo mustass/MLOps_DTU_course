@@ -18,8 +18,9 @@ def get_workspace(setup):
                create_resource_group=True,
                location=setup['location']
                )
-    
-    raise ValueError("workspace_exists in YML file is supposed to be a boolean (true/false)")
+
+    raise ValueError(f"workspace_exists in YML file is supposed" +
+                     "to be a boolean (true/false)")
 
 @click.command()
 @click.argument('config_file', type=click.Path(exists=True))
