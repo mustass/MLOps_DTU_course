@@ -22,15 +22,16 @@ def get_workspace(setup):
     raise ValueError(f"workspace_exists in YML file is supposed" +
                      "to be a boolean (true/false)")
 
+cli = click.Group()
 @click.command()
-@click.argument('config_file', type=click.Path(exists=True))
+@click.argument('config_file', default="./config/config.yml")
 @click.pass_context
-def run(ctx, config_file="./config/config.yml"):
+def run(ctx, config_file):
 
     with open(config_file) as f:
         flags = yaml.safe_load(f)
     if not flags['compute']['cloud']:
-        ctx.forward(start_training(config_file))
+        start_training(config_file)
     elif flags['compute']['cloud']:
         setup = flags['compute']
         ws = get_workspace(setup)

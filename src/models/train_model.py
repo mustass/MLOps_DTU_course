@@ -35,7 +35,7 @@ def train(config):
                       max_epochs=epochs,
                       callbacks=[checkpoint_callback],
                       gpus = config['gpus'])
-                      
+
     trainer.fit(model, data)
 
     # model registration
@@ -45,10 +45,7 @@ def train(config):
         run.register_model(model_path=best_model_path, 
                             model_name=name)
 
-@click.command()
-@click.argument('config_path',
-                type=click.Path(exists=True),
-                default='./config/config.yml')
+
 def main(config_path):
     with open(config_path) as f:
         config = yaml.safe_load(f)
