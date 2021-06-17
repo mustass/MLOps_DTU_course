@@ -35,7 +35,7 @@ def run(ctx, config_file="./config/config.yml"):
         ws = get_workspace(setup)
         env = Environment.from_pip_requirements(setup['environment_name'],
                                                 'requirements.txt')
-        experiment = Experiment(workspace=ws, name=setup['experiment_name'])
+        experiment = Experiment(workspace=ws, name=flags['experiment_name'])
         
         args = [config_file]
         config = ScriptRunConfig(source_directory='.',
@@ -49,15 +49,8 @@ def run(ctx, config_file="./config/config.yml"):
         #print(aml_url)
         run.wait_for_completion()
 
-        # model registration
 
-        run.register_model(model_path='/models/'+config['experiment_name']+'/model.pth', 
-                            model_name=config['experiment_name'],
-                            tags={'Tag1':'Tag1 Value'},
-                            properties={'Accuracy': run.get_metrics()['Accuracy']})
-
-
-
+        
 if __name__ == "__main__":
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)
