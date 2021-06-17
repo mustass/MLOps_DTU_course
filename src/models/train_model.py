@@ -35,15 +35,7 @@ def train(config):
                       max_epochs=epochs,
                       callbacks=[checkpoint_callback],
                       gpus = config['gpus'])
-    if not cloud:
-        trainer = Trainer(logger=logger,
-                        max_epochs=epochs,
-                        callbacks=[checkpoint_callback])
-    if cloud:
-        trainer = Trainer(logger=logger,
-                        max_epochs=epochs,
-                        gpus=-1,
-                        callbacks=[checkpoint_callback])
+                      
     trainer.fit(model, data)
 
     # model registration
