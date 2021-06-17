@@ -1,4 +1,6 @@
 from azureml.core import Workspace, Experiment, ScriptRunConfig, Environment
+import azureml._restclient.snapshots_client
+azureml._restclient.snapshots_client.SNAPSHOT_MAX_SIZE_BYTES = 1000000000000
 import click
 import logging
 from dotenv import find_dotenv, load_dotenv
