@@ -32,7 +32,7 @@ data:
 
 seed: 7
 
-device: 'cpu' # one of 'cpu'/'gpu'
+gpus: 0 # Choose -1 for all available
 
 training:
   batch_size: 64     # Batch size

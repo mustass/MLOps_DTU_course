@@ -4,7 +4,6 @@ from src.models.model import BERT_model
 from src.data.lightning_data_module import MyDataModule
 from pytorch_lightning.loggers import WandbLogger
 from src.data.fetch_dataset import parse_datasets
-from transformers import AutoModel
 import click, logging, yaml
 from dotenv import load_dotenv, find_dotenv
 
@@ -15,13 +14,9 @@ def train(config):
     lr = config['training']['lr']
     epochs = config['training']['max_epochs']
     full = config['training']['full']
-    bert = AutoModel.from_pretrained('bert-base-uncased')
 
-    if not full:
-        for param in bert.parameters():
-            param.requires_grad = False
 
-    model = BERT_model(bert, n_class=len(datasets), lr=lr)
+    model = BERT_model(full,n_class=len(datasets), lr=lr)
 
     data = MyDataModule(config)
 
@@ -35,7 +30,8 @@ def train(config):
     logger = WandbLogger(name=name)
     trainer = Trainer(logger=logger,
                       max_epochs=epochs,
-                      callbacks=[checkpoint_callback])
+                      callbacks=[checkpoint_callback],
+                      gpus = config['gpus'])
     trainer.fit(model, data)
 
 
