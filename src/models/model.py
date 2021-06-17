@@ -5,12 +5,20 @@ from torch.nn import functional as F
 from torch.optim import Adam
 import torch
 import numpy as np
+from transformers import AutoModel
+
 
 
 class BERT_model(LightningModule):
-    def __init__(self, bert, n_class, lr):
+    def __init__(self, full, n_class, lr):
         super().__init__()
-        self.bert = bert
+
+        self.bert = AutoModel.from_pretrained('bert-base-uncased').eval()
+        if not full:
+            for param in self.bert.parameters():
+                param.requires_grad = False
+
+
         self.n_class = n_class
         self.lr = lr
 
@@ -28,7 +36,9 @@ class BERT_model(LightningModule):
     #define the forward pass
     def forward(self, sent_id, mask):
         #pass the inputs to the model
-        _, cls_hs = self.bert(sent_id, attention_mask=mask, return_dict=False)
+        with torch.no_grad():
+            _, cls_hs = self.bert(sent_id, attention_mask=mask, return_dict=False)
+        
         x = self.fc1(cls_hs)
         x = self.relu(x)
         x = self.dropout(x)
