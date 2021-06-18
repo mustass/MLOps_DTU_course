@@ -41,7 +41,7 @@ def train(config):
     trainer = Trainer(logger=logger,
                       max_epochs=epochs,
                       callbacks=[checkpoint_callback],
-                      gpus = config['gpus'])
+                      gpus=config['gpus'])
 
     trainer.fit(model, data)
 
@@ -50,10 +50,10 @@ def train(config):
         print("\nRegistering the model...")
         best_model_path = checkpoint_callback.best_model_path
         run = Run.get_context()
-        run.upload_file(name = './models/' + name, 
-                path_or_stream = best_model_path)
-        run.register_model(model_path='./models/'+ name, 
-                            model_name=name)
+        run.upload_file(name='./models/' + name,
+                        path_or_stream=best_model_path)
+        run.register_model(model_path='./models/' + name, model_name=name)
+
 
 @click.command()
 @click.argument('config_file', default="./config/config.yml")
