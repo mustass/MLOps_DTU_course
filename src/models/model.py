@@ -1,5 +1,7 @@
 from torch import nn
 from pytorch_lightning.core.lightning import LightningModule
+from pytorch_lightning.metrics import functional as FM
+import torchmetrics
 from torch._C import layout
 from torch.nn import functional as F
 from torch.optim import Adam
@@ -52,17 +54,28 @@ class BERT_model(LightningModule):
         dat, mask, label = batch
         logits = self(dat, mask)
         loss = F.nll_loss(logits, label)
+        # acc = FM.accuracy(logits, label)
+        acc_metric = torchmetrics.Accuracy()
+        acc = acc_metric(logits.argmax(dim=1), label)
         self.log("train_Loss",
                  loss,
                  on_step=True,
                  on_epoch=True,
                  prog_bar=True,
                  logger=True)
-        return {"loss": loss, "outputs": logits, "labels": label}
+        self.log("train_accuracy",
+                 acc,
+                 on_step=True,
+                 on_epoch=True,
+                 prog_bar=True,
+                 logger=True)
+        
+        return {"loss": loss, "outputs": logits,"accuracy": acc, "labels": label}
 
 
     def training_epoch_end(self, logits, label):
-        acc = FM.accuracy(logits, label)
+        acc_metric = torchmetrics.Accuracy()
+        acc = acc_metric(logits.argmax(dim=1), label)
         self.log("train_epoch_accuracy",
                  acc,
                  on_epoch=True,
