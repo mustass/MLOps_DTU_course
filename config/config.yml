@@ -32,7 +32,7 @@ data:
 
 seed: 7
 
-gpus: -1 # Choose -1 for all available
+gpus: 0 # Choose -1 for all available
 
 training:
   batch_size: 64     # Batch size
@@ -44,13 +44,14 @@ training:
 prediction:
 
 compute:
-    cloud: true # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
-    subscription_id: "dcb1598f-693c-460c-8648-667de51a2475"
+    cloud: false # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
+    subscription_id: "992f0c62-c113-46d9-9706-d9d0002dd224" # "dcb1598f-693c-460c-8648-667de51a2475"
     resource_group: "myResourceGroup"
-    workspace_name: "s202798Workspace"
+    workspace_name: "s193035Workspace"
     workspace_exists: true
     location: "northeurope" # ignored if workspace_exists is true
-    compute_target: "s202798Compute-GPU"
+    compute_target: "s193035Compute-GPU"
     environment_name: "myEnvironment"
+    deploy: True
   
-wandbkey: "33f3c65ab2fd849f6c70cc9f40a93f6b63bf7243"
+wandbkey: "8740c1fcff4d9a5925bb9569dba5b7bee409860f"

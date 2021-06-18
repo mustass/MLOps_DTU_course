@@ -1,9 +1,12 @@
 from azureml.core import Workspace, Experiment, ScriptRunConfig, Environment
+import azureml._restclient.snapshots_client
+azureml._restclient.snapshots_client.SNAPSHOT_MAX_SIZE_BYTES = 1000000000000
 import click
 import logging
 from dotenv import find_dotenv, load_dotenv
 import yaml
 from src.models.train_model import main as start_training
+from src.models.deployment import deploy
 
 
 def get_workspace(setup):
@@ -19,7 +22,7 @@ def get_workspace(setup):
                location=setup['location']
                )
 
-    raise ValueError(f"workspace_exists in YML file is supposed" +
+    raise ValueError("workspace_exists in YML file is supposed" +
                      "to be a boolean (true/false)")
 
 cli = click.Group()
@@ -31,7 +34,7 @@ def run(ctx, config_file):
     with open(config_file) as f:
         flags = yaml.safe_load(f)
     if not flags['compute']['cloud']:
-        start_training(config_file)
+        ctx.forward(start_training)
     elif flags['compute']['cloud']:
         setup = flags['compute']
         ws = get_workspace(setup)
@@ -48,7 +51,12 @@ def run(ctx, config_file):
 
         run = experiment.submit(config)
         aml_url = run.get_portal_url()
-        #print(aml_url)
+        
+        if setup['deploy']:
+            deploy(ws, flags['experiment_name'])
+
+
+
         run.wait_for_completion()
 
 
