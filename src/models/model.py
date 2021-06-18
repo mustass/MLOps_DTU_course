@@ -67,7 +67,7 @@ class BERT_model(LightningModule):
                  logger=True)
         self.log("train_accuracy",
                  acc,
-                 on_step=False,
+                 on_step=True,
                  on_epoch=True,
                  prog_bar=True,
                  logger=True)
