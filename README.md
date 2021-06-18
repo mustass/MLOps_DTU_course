@@ -40,8 +40,18 @@ FOR CLOUD we do need to keep
 ```python
 -e git+https://github.com/stas97/transformers-group-octupus.git@ae5b2185752a82464884a255ec5b360aa6be991e#egg=src
 ```
+in `requirements.txt`
 This will install the `src` package from GitHub.
 
+PLEASE DO NOT DO 
+```bash
+pip freeze
+```
+If you need a package, add it manually and without a specified version. And if you have added a package, it's nice if you could test that recreating the environment with 
+```bash
+pip install -r requirements.txt
+```
+will work in a fresh environment. 
 Project Organization
 ------------
 
