@@ -122,6 +122,13 @@ def train(config):
 
     run.wait_for_completion(show_output=False)
 
+    if deploy:
+        try:
+            os.makedirs("./src/web-service", exist_ok=True)
+        except FileExistsError:
+            pass
+        launch_deployment(config)
+
 @click.command()
 @click.argument('config_file', default="./config/config.yml")
 def main(config_file):
