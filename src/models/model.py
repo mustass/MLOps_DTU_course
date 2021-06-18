@@ -14,11 +14,11 @@ class BERT_model(LightningModule):
     def __init__(self, full, n_class, lr):
         super().__init__()
 
-        self.bert = AutoModel.from_pretrained('bert-base-uncased').eval()
+        self.bert = AutoModel.from_pretrained('bert-base-uncased')
         if not full:
             for param in self.bert.parameters():
                 param.requires_grad = False
-
+            self.bert.eval()
 
         self.n_class = n_class
         self.lr = lr
@@ -65,43 +65,33 @@ class BERT_model(LightningModule):
                  logger=True)
         self.log("train_accuracy",
                  acc,
-                 on_step=True,
+                 on_step=False,
                  on_epoch=True,
                  prog_bar=True,
                  logger=True)
         
-        return {"loss": loss, "outputs": logits,"accuracy": acc, "labels": label}
+        return {"loss": loss, "outputs": logits,"accuracy": acc}
 
-
-    def training_epoch_end(self, logits, label):
-        acc_metric = torchmetrics.Accuracy()
-        acc = acc_metric(logits.argmax(dim=1), label)
-        self.log("train_epoch_accuracy",
-                 acc,
-                 on_epoch=True,
-                 prog_bar=True,
-                 logger=True)
-
-    #def training_epoch_end(self, logits, label):
-    # 
-    #    ps = torch.exp(logits)
-    #    top_p, top_class = ps.topk(1, dim=1)
-    #    equals = top_class == label.view(*top_class.shape)
-    #    accuracy = torch.mean(equals.type(torch.FloatTensor))
-    #
-    #    accuracy = accuracy / len(label)
-    #    self.log(f'Test accuracy: {accuracy.item()*100}%',on_epoch=True, logger=True)
 
     def validation_step(self, batch, batch_idx):
         dat, mask, label = batch
         logits = self(dat, mask)
         loss = F.nll_loss(logits, label)
+        acc_metric = torchmetrics.Accuracy()
+        acc = acc_metric(logits.argmax(dim=1), label)
         self.log("val_loss",
                  loss,
+                 on_step=True,
+                 on_epoch=True,
+                 prog_bar=True,
+                 logger=True)
+        self.log("train_accuracy",
+                 acc,
                  on_step=False,
                  on_epoch=True,
                  prog_bar=True,
                  logger=True)
+        
 
     def test_step(self, batch, batch_idx):
         dat, mask, label = batch
