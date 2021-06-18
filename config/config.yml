@@ -52,6 +52,6 @@ compute:
     location: "northeurope" # ignored if workspace_exists is true
     compute_target: "s193035Compute-GPU"
     environment_name: "myEnvironment"
-    deploy: True
+    deploy: true
   
 wandbkey: "8740c1fcff4d9a5925bb9569dba5b7bee409860f"

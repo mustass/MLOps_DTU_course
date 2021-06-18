@@ -9,7 +9,7 @@ import os
 # Called when the service is loaded
 def init():
     global model
-    model_path = os.path.join(os.getenv('AZUREML_MODEL_DIR'), '/models/')
+    model_path = os.path.join(os.getenv('AZUREML_MODEL_DIR'), '/models/monki-see-monki-sleep')
 
     #global model
     #model = Model(ws, flags['experiment_name'])
