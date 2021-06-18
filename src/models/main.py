@@ -4,7 +4,8 @@ import logging
 from dotenv import find_dotenv, load_dotenv
 import yaml
 from src.models.train_model import main as start_training
-from src.models.deployment import deploy
+
+import os
 
 
 def get_workspace(setup):
@@ -42,19 +43,14 @@ def run(ctx, config_file):
         
         args = [config_file]
         config = ScriptRunConfig(source_directory='.',
-                                 script='src/models/train_model.py',
-                                 arguments=args,
-                                 compute_target=setup['compute_target'],
-                                 environment=env)
+                                script='src/models/train_model.py',
+                                arguments=args,
+                                compute_target=setup['compute_target'],
+                                environment=env)
 
         run = experiment.submit(config)
         aml_url = run.get_portal_url()
         
-        if setup['deploy']:
-            deploy(ws, flags['experiment_name'])
-
-
-
         run.wait_for_completion()
 
 
