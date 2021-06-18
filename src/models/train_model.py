@@ -9,7 +9,8 @@ import click, logging, yaml
 from dotenv import load_dotenv, find_dotenv
 from azureml.core import Run
 import wandb
-
+from src.models.deployment import launch_deployment
+import os
 
 def train(config):
     name = config['experiment_name']
@@ -18,6 +19,7 @@ def train(config):
     epochs = config['training']['max_epochs']
     full = config['training']['full']
     cloud = config['compute']['cloud']
+    deploy = config['compute']['deploy']
 
     bert = AutoModel.from_pretrained('bert-base-uncased')
 
@@ -54,6 +56,13 @@ def train(config):
                         path_or_stream=best_model_path)
         run.register_model(model_path='./models/' + name, model_name=name)
 
+
+    if deploy:
+        try:
+            os.makedirs("./src/web-service", exist_ok=True)
+        except FileExistsError:
+            pass
+        launch_deployment(config)
 
 @click.command()
 @click.argument('config_file', default="./config/config.yml")

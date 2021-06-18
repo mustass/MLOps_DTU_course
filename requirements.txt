@@ -1,5 +1,5 @@
 # Local
-#-e git+https://github.com/stas97/transformers-group-octupus.git@master
+-e git+https://github.com/stas97/transformers-group-octupus.git@master
 
 # External
 Sphinx
