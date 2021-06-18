@@ -3,6 +3,42 @@ transformers-group-octupus
 
 This project is made for the course Machine Learning Operations at the Technical University of Denmark. It has been made in collaboration of the students and acts as a exam project. The focus has been to make a machine learning model operationable, i.e. being able to access a trained model for the problem considered remotely while monitoring the performance to ensure the model functions as expected. The problem considered is text classification and specifically the model should classify what a series of amazon reviews are reviewing. To solve this, a BERT model based on HuggingFace will be employed. The project has been structured using the cookiecutter approach which means the project is organised in the following manner. To run the code it is necessary to clone the repository and run the main with the config file.
 
+
+
+## Installation and running when developing
+
+First we create an environment and it is ABSOLUTELY NECESSARY to have Python version 3.7 for Azure to not be a pain in the ass. 
+
+```bash
+conda create --name [your_environment_name] python=3.7
+```
+
+Then we run:
+
+```bash
+conda activate [your_environment_name]
+```
+
+After that: 
+
+```bash
+pip install -r requirements.txt
+```
+
+And lastly to have the correct version of the internal package `src` we do: 
+
+```bash
+pip install -e .
+```
+or 
+```bash
+conda develop .
+```
+Then things should work :) 
+
+
+
+
 Project Organization
 ------------
 
