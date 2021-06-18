@@ -8,7 +8,6 @@ from os.path import isfile, join
 import random
 import logging
 from dotenv import find_dotenv, load_dotenv
-from path import Path
 import click
 import yaml
 
