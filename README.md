@@ -36,8 +36,11 @@ conda develop .
 ```
 Then things should work :) 
 
-
-
+FOR CLOUD we do need to keep 
+```python
+-e git+https://github.com/stas97/transformers-group-octupus.git@ae5b2185752a82464884a255ec5b360aa6be991e#egg=src
+```
+This will install the `src` package from GitHub.
 
 Project Organization
 ------------
