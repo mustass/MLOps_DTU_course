@@ -27,9 +27,6 @@ def get_workspace(setup):
                      "to be a boolean (true/false)")
 
 
-cli = click.Group()
-
-
 @click.command()
 @click.argument('config_file', default="./config/config.yml")
 @click.pass_context
