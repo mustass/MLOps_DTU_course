@@ -72,4 +72,8 @@ if __name__ == "__main__":
     #load up the .env entries as environment variables
     load_dotenv(find_dotenv())
     launch_deployment()
+<<<<<<< HEAD
 """
+=======
+"""
+>>>>>>> a813e79400cde8e5a65e48b7e65a4196e031cddf

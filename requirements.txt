@@ -1,21 +1,17 @@
-# Local
--e git+https://github.com/stas97/transformers-group-octupus.git@master
+-e git+https://github.com/stas97/transformers-group-octupus.git@2561be1bdf3961907e30d0676569f431cca35ee8#egg=src
 
-# External
-Sphinx
-coverage
-awscli
-flake8
-transformers
-torch
-scikit-learn
-pytest
-yapf
-numpy
-matplotlib
-torchvision
-pytorch-lightning
-python-dotenv
-pandas
+aiohttp
 azureml-sdk
+fusepy
+jsonlib-python3
+pandas
+path
+pickle5
+pip-chill
+pylint
+python-dotenv
+pytorch-lightning
+raw-zlib
+scikit-learn
+transformers
 wandb

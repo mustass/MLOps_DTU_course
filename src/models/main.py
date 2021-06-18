@@ -55,10 +55,7 @@ def run(ctx, config_file):
 
         run = experiment.submit(config)
         aml_url = run.get_portal_url()
-
-        if setup['deploy']:
-            deploy(ws, flags['experiment_name'])
-
+        
         run.wait_for_completion()
 
 
