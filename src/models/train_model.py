@@ -110,7 +110,6 @@ def train(config):
         run.register_model(model_path='./models/'+ name, 
                             model_name=name)
         print("Model registered successfully")
-<<<<<<< HEAD
 
     if deploy:
         try:
@@ -122,8 +121,6 @@ def train(config):
         launch_deployment(config)
 
     run.wait_for_completion(show_output=False)
-=======
->>>>>>> added structure for deployment. not yet working...
 
     if deploy:
         try:
