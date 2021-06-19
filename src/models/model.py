@@ -34,6 +34,9 @@ class BERT_model(LightningModule):
         #softmax activation function
         self.softmax = nn.LogSoftmax(dim=1)
 
+        # Accuracy metric
+        self.Accuracy = torchmetrics.Accuracy()
+
     #define the forward pass
     def forward(self, sent_id, mask):
         #pass the inputs to the model
@@ -57,8 +60,7 @@ class BERT_model(LightningModule):
         logits = self(dat, mask)
         loss = F.nll_loss(logits, label)
         # acc = FM.accuracy(logits, label)
-        acc_metric = torchmetrics.Accuracy()
-        acc = acc_metric(logits.argmax(dim=1), label)
+        acc = self.Accuracy(logits.argmax(dim=1), label)
         self.log("train_Loss",
                  loss,
                  on_step=True,
@@ -78,8 +80,7 @@ class BERT_model(LightningModule):
         dat, mask, label = batch
         logits = self(dat, mask)
         loss = F.nll_loss(logits, label)
-        acc_metric = torchmetrics.Accuracy()
-        acc = acc_metric(logits.argmax(dim=1), label)
+        acc = self.Accuracy(logits.argmax(dim=1), label)
         self.log("val_loss",
                  loss,
                  on_step=True,
