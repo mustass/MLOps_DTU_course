@@ -1,7 +1,6 @@
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 from src.models.model import BERT_model
-from transformers import AutoModel
 from src.data.lightning_data_module import MyDataModule
 from pytorch_lightning.loggers import WandbLogger
 from src.data.fetch_dataset import parse_datasets
@@ -19,13 +18,7 @@ def train(config):
     full = config['training']['full']
     cloud = config['compute']['cloud']
 
-    bert = AutoModel.from_pretrained('bert-base-uncased')
-
-    if not full:
-        for param in bert.parameters():
-            param.requires_grad = False
-
-    model = BERT_model(bert, n_class=len(datasets), lr=lr)
+    model = BERT_model(full, n_class=len(datasets), lr=lr)
 
     data = MyDataModule(config)
 
