@@ -1,6 +1,7 @@
 # Local
 -e git+https://github.com/stas97/transformers-group-octupus.git@master#egg=src
 
+# External
 aiohttp
 azureml-sdk
 fusepy
@@ -16,3 +17,12 @@ raw-zlib
 scikit-learn
 transformers
 wandb
+matplotlib
+torchvision
+Sphinx
+coverage
+awscli
+flake8
+pytest
+yapf
+numpy
