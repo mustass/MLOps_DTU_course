@@ -1,7 +1,7 @@
 # Local
 -e git+https://github.com/stas97/transformers-group-octupus.git@master#egg=src
 
-# External
+# External (orginal)
 Sphinx
 coverage
 awscli
@@ -19,3 +19,12 @@ python-dotenv
 pandas
 azureml-sdk
 wandb
+
+# Added by Marco
+aiohttp
+fusepy
+jsonlib-python3
+path
+pickle5
+pylint
+raw-zlib

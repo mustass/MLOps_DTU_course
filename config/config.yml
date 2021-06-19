@@ -2,7 +2,7 @@ experiment_name: monki-see-monki-sleep # This is done so that we can always find
 
 data:
   train_val_test_splits: [0.6,0.2,0.2]
-  max_seq_length: 25 # Max review string length for the Tokenizer
+  max_seq_length: 3 # Max review string length for the Tokenizer
   used_datasets: { # Which dataset do we want to join and load (I can't see a case where these are not the same)
                   "Books": 0,
                   "Electronics": 0,
@@ -32,7 +32,7 @@ data:
 
 seed: 7
 
-gpus: 0 # Choose -1 for all available
+gpus: -1 # Choose -1 for all available
 
 training:
   batch_size: 64     # Batch size
@@ -44,7 +44,7 @@ training:
 prediction:
 
 compute:
-    cloud: false # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
+    cloud: true # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
     subscription_id: "992f0c62-c113-46d9-9706-d9d0002dd224" # "dcb1598f-693c-460c-8648-667de51a2475"
     resource_group: "myResourceGroup"
     workspace_name: "s193035Workspace"
@@ -52,6 +52,6 @@ compute:
     location: "northeurope" # ignored if workspace_exists is true
     compute_target: "s193035Compute-GPU"
     environment_name: "myEnvironment"
-    deploy: True
+    deploy: true
   
 wandbkey: "8740c1fcff4d9a5925bb9569dba5b7bee409860f"
