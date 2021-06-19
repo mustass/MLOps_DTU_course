@@ -121,8 +121,7 @@ def train(config):
         run.upload_file(name="./config/config.yml",
                         path_or_stream = './config/config.yml')
         launch_deployment(config)
-
-    run.wait_for_completion(show_output=False)
+        
 
 @click.command()
 @click.argument('config_file', default="./config/config.yml")
