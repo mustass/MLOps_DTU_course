@@ -110,6 +110,7 @@ def train(config):
         run.register_model(model_path='./models/'+ name, 
                             model_name=name)
         print("Model registered successfully")
+<<<<<<< HEAD
 
     if deploy:
         try:
@@ -121,13 +122,19 @@ def train(config):
         launch_deployment(config)
 
     run.wait_for_completion(show_output=False)
+=======
+>>>>>>> added structure for deployment. not yet working...
 
     if deploy:
         try:
             os.makedirs("./src/web-service", exist_ok=True)
         except FileExistsError:
             pass
+        run.upload_file(name="./config/config.yml",
+                        path_or_stream = './config/config.yml')
         launch_deployment(config)
+
+    run.wait_for_completion(show_output=False)
 
 @click.command()
 @click.argument('config_file', default="./config/config.yml")
