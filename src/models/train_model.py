@@ -113,8 +113,6 @@ def train(config):
                         path_or_stream = './config/config.yml')
         launch_deployment(config)
 
-    run.wait_for_completion(show_output=False)
-
     if deploy:
         try:
             os.makedirs("./src/web-service", exist_ok=True)
