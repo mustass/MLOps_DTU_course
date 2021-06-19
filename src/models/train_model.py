@@ -19,13 +19,7 @@ def train(config):
     full = config['training']['full']
     cloud = config['compute']['cloud']
 
-    bert = AutoModel.from_pretrained('bert-base-uncased')
-
-    if not full:
-        for param in bert.parameters():
-            param.requires_grad = False
-
-    model = BERT_model(bert, n_class=len(datasets), lr=lr)
+    model = BERT_model(full, n_class=len(datasets), lr=lr)
 
     data = MyDataModule(config)
 
