@@ -1,28 +1,30 @@
 # Local
 -e git+https://github.com/stas97/transformers-group-octupus.git@master#egg=src
 
-# External
-aiohttp
-azureml-sdk
-fusepy
-jsonlib-python3
-pandas
-path
-pickle5
-pip-chill
-pylint
-python-dotenv
-pytorch-lightning
-raw-zlib
-scikit-learn
-transformers
-wandb
-matplotlib
-torchvision
+# External (orginal)
 Sphinx
 coverage
 awscli
 flake8
+transformers
+torch
+scikit-learn
 pytest
 yapf
 numpy
+matplotlib
+torchvision
+pytorch-lightning
+python-dotenv
+pandas
+azureml-sdk
+wandb
+
+# Added by Marco
+aiohttp
+fusepy
+jsonlib-python3
+path
+pickle5
+pylint
+raw-zlib
