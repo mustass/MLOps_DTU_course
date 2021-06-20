@@ -16,6 +16,7 @@ from azureml.core.conda_dependencies import CondaDependencies
 from azureml.core.webservice import AciWebservice
 from azureml.core.model import InferenceConfig
 
+
 def get_workspace(setup):
     if setup['workspace_exists']:
         return Workspace.get(name=setup['workspace_name'],
@@ -23,14 +24,14 @@ def get_workspace(setup):
                              resource_group=setup['resource_group'])
     if not setup['workspace_exists']:
         return Workspace.create(name=setup['workspace_name'],
-               subscription_id=setup['subscription_id'],
-               resource_group=setup['resource_group'],
-               create_resource_group=True,
-               location=setup['location']
-               )
+                                subscription_id=setup['subscription_id'],
+                                resource_group=setup['resource_group'],
+                                create_resource_group=True,
+                                location=setup['location'])
 
     raise ValueError("workspace_exists in YML file is supposed" +
                      "to be a boolean (true/false)")
+
 
 def launch_deployment(flags):
 
@@ -39,25 +40,29 @@ def launch_deployment(flags):
     model = ws.models[flags['experiment_name']]
 
     env = CondaDependencies()
-    packages = ["joblib", "PyYAML"]    
+    packages = ["joblib", "PyYAML"]
     for package in packages:
         env.add_conda_package(package)
 
-    with open("./src/web-service/env_file.yml","w") as f:
+    with open("./src/web-service/env_file.yml", "w") as f:
         f.write(env.serialize_to_string())
 
-    inference_config = InferenceConfig(runtime= "python",
-                            source_directory='.',
-                            entry_script="./src/web-service/entry_script.py",
-                            conda_file="./src/web-service/env_file.yml")
+    inference_config = InferenceConfig(
+        runtime="python",
+        source_directory='.',
+        entry_script="./src/web-service/entry_script.py",
+        conda_file="./src/web-service/env_file.yml")
 
-    deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1, 
-                                                        memory_gb = 1, 
-                                                        auth_enabled=False)
+    deployment_config = AciWebservice.deploy_configuration(cpu_cores=1,
+                                                           memory_gb=1,
+                                                           auth_enabled=False)
 
     service_name = flags['experiment_name']
-    service = Model.deploy(ws, service_name, [model], inference_config, 
-                        deployment_config, overwrite=True)
+    service = Model.deploy(ws,
+                           service_name, [model],
+                           inference_config,
+                           deployment_config,
+                           overwrite=True)
     service.wait_for_deployment(True)
 
     print(service.state)
@@ -98,10 +103,9 @@ def train(config):
         print("\nRegistering the model...")
         best_model_path = checkpoint_callback.best_model_path
         run = Run.get_context()
-        run.upload_file(name = './models/' + name, 
-                path_or_stream = best_model_path)
-        run.register_model(model_path='./models/'+ name, 
-                            model_name=name)
+        run.upload_file(name='./models/' + name,
+                        path_or_stream=best_model_path)
+        run.register_model(model_path='./models/' + name, model_name=name)
         print("Model registered successfully")
 
     if deploy:
@@ -110,7 +114,7 @@ def train(config):
         except FileExistsError:
             pass
         run.upload_file(name="./config/config.yml",
-                        path_or_stream = './config/config.yml')
+                        path_or_stream='./config/config.yml')
         launch_deployment(config)
 
     run.wait_for_completion(show_output=False)
@@ -121,10 +125,11 @@ def train(config):
         except FileExistsError:
             pass
         run.upload_file(name="./config/config.yml",
-                        path_or_stream = './config/config.yml')
+                        path_or_stream='./config/config.yml')
         launch_deployment(config)
 
     run.wait_for_completion(show_output=False)
+
 
 @click.command()
 @click.argument('config_file', default="./config/config.yml")

@@ -45,14 +45,14 @@ def run(ctx, config_file):
 
         args = [config_file]
         config = ScriptRunConfig(source_directory='.',
-                                script='src/models/train_model.py',
-                                arguments=args,
-                                compute_target=setup['compute_target'],
-                                environment=env)
+                                 script='src/models/train_model.py',
+                                 arguments=args,
+                                 compute_target=setup['compute_target'],
+                                 environment=env)
 
         run = experiment.submit(config)
         aml_url = run.get_portal_url()
-        
+
         run.wait_for_completion()
 
 
