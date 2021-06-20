@@ -1,0 +1,5 @@
+Transformers Hugging Face - https://www.thepythoncode.com/article/finetuning-bert-using-huggingface-transformers-python 
+Using a Fine Tuned Model  - https://www.analyticsvidhya.com/blog/2020/07/transfer-learning-for-nlp-fine-tuning-bert-for-text-classification/
+Pytorch Tutorials - https://pytorch.org/tutorials/
+Dataset - http://jmcauley.ucsd.edu/data/amazon/links.html
+
