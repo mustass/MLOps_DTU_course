@@ -20,8 +20,7 @@ def test_model(config_path='config/config.yml'):
     
     # Initialise model
     lr = config['training']['lr']
-    bert = AutoModel.from_pretrained('bert-base-uncased')
-    model = BERT_model(bert, n_class=len(datasets), lr=lr)
+    model = BERT_model(False, n_class=len(datasets), lr=lr)
     
     # Some test of the model
     data.prepare_data()
