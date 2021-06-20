@@ -10,6 +10,7 @@ from azureml.core import Run
 import wandb
 import os
 import joblib
+import shutil
 
 from azureml.core import Workspace, Model, Environment
 from azureml.core.conda_dependencies import CondaDependencies
@@ -43,13 +44,13 @@ def launch_deployment(flags):
     for package in packages:
         env.add_conda_package(package)
 
-    with open("./src/web-service/env_file.yml","w") as f:
+    with open("./src/webservice/env_file.yml","w") as f:
         f.write(env.serialize_to_string())
 
     inference_config = InferenceConfig(runtime= "python",
-                            source_directory='.',
-                            entry_script="./src/web-service/entry_script.py",
-                            conda_file="./src/web-service/env_file.yml")
+                            source_directory='./src/webservice',
+                            entry_script="entry_script.py",
+                            conda_file="env_file.yml")
 
     deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1, 
                                                         memory_gb = 1, 
@@ -102,24 +103,21 @@ def train(config):
                 path_or_stream = best_model_path)
         run.register_model(model_path='./models/'+ name, 
                             model_name=name)
+        shutil.copyfile(best_model_path, "./src/webservice/"+name)
+        
         print("Model registered successfully")
 
     if deploy:
         try:
-            os.makedirs("./src/web-service", exist_ok=True)
+            os.makedirs("./src/webservice", exist_ok=True)
         except FileExistsError:
             pass
         run.upload_file(name="./config/config.yml",
                         path_or_stream = './config/config.yml')
-        launch_deployment(config)
-
-    if deploy:
-        try:
-            os.makedirs("./src/web-service", exist_ok=True)
-        except FileExistsError:
-            pass
-        run.upload_file(name="./config/config.yml",
-                        path_or_stream = './config/config.yml')
+        print("Copying static files into source directory...")
+        shutil.copyfile("./config/config.yml", "./src/webservice/config.yml")
+        shutil.copyfile("./src/models/model.py", "./src/webservice/model.py")
+        print("Static files copied successfully.")
         launch_deployment(config)
         
 
