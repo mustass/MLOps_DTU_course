@@ -13,7 +13,7 @@ from src.data.fetch_dataset import parse_datasets
 from transformers import AutoModel
 
 
-def test_model(config_path='config/config.yml'):
+def test_model(config_path='config/test_config.yml'):
     with open(config_path) as f:
         config = yaml.safe_load(f)
     data = MyDataModule(config)

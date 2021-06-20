@@ -10,7 +10,7 @@ import yaml
 from src.data.lightning_data_module import MyDataModule
 
 
-def test_data(config_path='config/config.yml'):
+def test_data(config_path='config/test_config.yml'):
     with open(config_path) as f:
         config = yaml.safe_load(f)
     data = MyDataModule(config)
