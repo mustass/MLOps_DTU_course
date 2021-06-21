@@ -49,23 +49,22 @@ def launch_deployment(flags):
 
     inference_config = InferenceConfig(source_directory='./src',
                             entry_script="webservice/entry_script.py",
-                            environment=env)#,
-                            #conda_file="env_file.yml",
-                            #enable_gpu=True)
-
+                            environment=env)
+    
     compute_config = AksCompute.provisioning_configuration(
-                                    vm_size = "Standard_D2_v2",
-                                    agent_count = 4,
-                                    location= "westeurope")
-
+                                    vm_size = "Standard_A2_v2",
+                                    agent_count = 2,
+                                    location= "westeurope",
+                                    cluster_purpose="DevTest")
+    
     compute_name = "DeployAKS" # max 16 char
     service_cluster = ComputeTarget.create(ws, compute_name,
                                             compute_config)
+    
 
     service_cluster.wait_for_completion(show_output=True)
 
-    deployment_config = AksWebservice.deploy_configuration(cpu_cores = 2,
-                                                            memory_gb = 5)
+    deployment_config = AksWebservice.deploy_configuration(compute_target_name=compute_name)
 
     #deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1,
     #                                                    memory_gb = 1, 
