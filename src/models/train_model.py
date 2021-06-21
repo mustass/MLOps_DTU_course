@@ -14,7 +14,8 @@ import shutil
 
 from azureml.core import Workspace, Model, Environment
 from azureml.core.conda_dependencies import CondaDependencies
-from azureml.core.webservice import AciWebservice
+from azureml.core.webservice import AciWebservice, AksWebService
+from azureml.core.compute import AksCompute, ComputeTarget 
 from azureml.core.model import InferenceConfig
 
 def get_workspace(setup):
@@ -43,7 +44,8 @@ def launch_deployment(flags):
     with open("deployment_requirements.txt", "a") as f:
         f.write("azureml-defaults")
 
-    env = Environment.from_pip_requirements("deploymentEnv", "deployment_requirements.txt")
+    env = Environment.from_pip_requirements("deploymentEnv", 
+                                        "deployment_requirements.txt")
 
     inference_config = InferenceConfig(source_directory='./src',
                             entry_script="webservice/entry_script.py",
@@ -51,18 +53,32 @@ def launch_deployment(flags):
                             #conda_file="env_file.yml",
                             #enable_gpu=True)
 
-    deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1,
-                                                        memory_gb = 1, 
-                                                        auth_enabled=False)
+    compute_config = AksCompute.provisioning_configuration(
+                                    vm_size = "Standard_D4_v3",
+                                    agent_count = 4,
+                                    location= "northeurope")
+
+    service_cluster = ComputeTarget.create(ws, "DeploymentCompute", 
+                                            compute_config)
+
+    service_cluster.wait_for_completion(show_output=True)
+
+    deployment_config = AksWebservice.deploy_configuration(cpu_cores=4,
+                                                            memory_gb = 16)
+
+    #deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1,
+    #                                                    memory_gb = 1, 
+    #                                                    auth_enabled=False)
+    
 
     service_name = flags['experiment_name']
     service = Model.deploy(ws, service_name, [model], inference_config, 
                         deployment_config, overwrite=True)
 
+    service.wait_for_deployment(True)
+
     print(service.state)
     print("Endpoint: ", service.scoring_uri)
-
-    service.wait_for_deployment(True)
 
 
 def train(config):
