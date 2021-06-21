@@ -1,7 +1,7 @@
 import requests
 import json
 
-endpoint = "http://2ec89b4e-dab7-4463-bf81-85911867487b.northeurope.azurecontainer.io/score"
+endpoint = "http://47fc2036-ae6a-4ff0-9977-45e85bde4dc6.northeurope.azurecontainer.io/score"
 x_new = [[2,180,74,24,21,23.9091702,1.488172308,22],
          [0,148,58,11,179,39.19207553,0.160829008,45]]
 
