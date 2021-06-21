@@ -39,24 +39,30 @@ def launch_deployment(flags):
     ws = get_workspace(setup)
     model = ws.models[flags['experiment_name']]
 
-    env = Environment.from_pip_requirements("deploymentEnv", "requirements.txt")
+    shutil.copyfile("requirements.txt", "deployment_requirements.txt")
+    with open("deployment_requirements.txt", "a") as f:
+        f.write("azureml-defaults")
 
-    inference_config = InferenceConfig(runtime= "python",
-                            source_directory='./src/webservice',
+    env = Environment.from_pip_requirements("deploymentEnv", "deployment_requirements.txt")
+
+    inference_config = InferenceConfig(source_directory='./src/webservice',
                             entry_script="entry_script.py",
-                            environment=env)
+                            environment=env)#,
+                            #conda_file="env_file.yml",
+                            #enable_gpu=True)
 
-    deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1, 
+    deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1,
                                                         memory_gb = 1, 
                                                         auth_enabled=False)
 
     service_name = flags['experiment_name']
     service = Model.deploy(ws, service_name, [model], inference_config, 
                         deployment_config, overwrite=True)
-    service.wait_for_deployment(True)
 
     print(service.state)
     print("Endpoint: ", service.scoring_uri)
+
+    service.wait_for_deployment(True)
 
 
 def train(config):
