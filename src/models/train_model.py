@@ -39,18 +39,12 @@ def launch_deployment(flags):
     ws = get_workspace(setup)
     model = ws.models[flags['experiment_name']]
 
-    env = CondaDependencies()
-    packages = ["joblib", "PyYAML"]    
-    for package in packages:
-        env.add_conda_package(package)
-
-    with open("./src/webservice/env_file.yml","w") as f:
-        f.write(env.serialize_to_string())
+    env = Environment.from_pip_requirements("deploymentEnv", "requirements.txt")
 
     inference_config = InferenceConfig(runtime= "python",
                             source_directory='./src/webservice',
                             entry_script="entry_script.py",
-                            conda_file="env_file.yml")
+                            environment=env)
 
     deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1, 
                                                         memory_gb = 1, 

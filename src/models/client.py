@@ -1,7 +1,7 @@
 import requests
 import json
 
-endpoint = "http://e25660ec-b8f1-44e3-b933-fb6655c48d69.northeurope.azurecontainer.io/score"
+endpoint = "http://67f963fd-ae43-45b4-aaa6-f2022847e2a9.northeurope.azurecontainer.io/score"
 x_new = [[2,180,74,24,21,23.9091702,1.488172308,22],
          [0,148,58,11,179,39.19207553,0.160829008,45]]
 
@@ -13,8 +13,8 @@ headers = { 'Content-Type':'application/json' }
 
 predictions = requests.post(endpoint, input_json, headers = headers)
 predictions = predictions.content.decode('ascii')
-print(predictions)
-predicted_classes = json.loads(predictions.json())
+print(len(predictions))
+#predicted_classes = json.loads(predictions.json())
 
-for i in range(len(x_new)):
-    print ("Patient {}".format(x_new[i]), predicted_classes[i] )
+#for i in range(len(x_new)):
+#    print ("Patient {}".format(x_new[i]), predicted_classes[i] )
