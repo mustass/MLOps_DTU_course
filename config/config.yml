@@ -49,8 +49,8 @@ compute:
     resource_group: "myResourceGroup"
     workspace_name: "myWorkspace"
     workspace_exists: true
-    location: "northeurope" # ignored if workspace_exists is true
-    compute_target: "myGPU"
+    location: "westeurope" # ignored if workspace_exists is true
+    compute_target: "myGPUCompute"
     environment_name: "myEnvironment"
     deploy: true
   

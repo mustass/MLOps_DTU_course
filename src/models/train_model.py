@@ -14,7 +14,7 @@ import shutil
 
 from azureml.core import Workspace, Model, Environment
 from azureml.core.conda_dependencies import CondaDependencies
-from azureml.core.webservice import AciWebservice, AksWebService
+from azureml.core.webservice import AciWebservice, AksWebservice
 from azureml.core.compute import AksCompute, ComputeTarget 
 from azureml.core.model import InferenceConfig
 
@@ -54,17 +54,18 @@ def launch_deployment(flags):
                             #enable_gpu=True)
 
     compute_config = AksCompute.provisioning_configuration(
-                                    vm_size = "Standard_D4_v3",
+                                    vm_size = "Standard_D2_v2",
                                     agent_count = 4,
-                                    location= "northeurope")
+                                    location= "westeurope")
 
-    service_cluster = ComputeTarget.create(ws, "DeploymentCompute", 
+    compute_name = "DeployAKS" # max 16 char
+    service_cluster = ComputeTarget.create(ws, compute_name,
                                             compute_config)
 
     service_cluster.wait_for_completion(show_output=True)
 
-    deployment_config = AksWebservice.deploy_configuration(cpu_cores=4,
-                                                            memory_gb = 16)
+    deployment_config = AksWebservice.deploy_configuration(cpu_cores = 2,
+                                                            memory_gb = 5)
 
     #deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1,
     #                                                    memory_gb = 1, 
