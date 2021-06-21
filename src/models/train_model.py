@@ -45,8 +45,8 @@ def launch_deployment(flags):
 
     env = Environment.from_pip_requirements("deploymentEnv", "deployment_requirements.txt")
 
-    inference_config = InferenceConfig(source_directory='./src/webservice',
-                            entry_script="entry_script.py",
+    inference_config = InferenceConfig(source_directory='./src',
+                            entry_script="webservice/entry_script.py",
                             environment=env)#,
                             #conda_file="env_file.yml",
                             #enable_gpu=True)
