@@ -1,10 +1,4 @@
-import json
-import joblib
-import numpy as np
-from azureml.core import Workspace, Run
-from azureml.core.model import Model
 import yaml
-import os
 from src.webservice.model import BERT_model
 
 # Called when the service is loaded
