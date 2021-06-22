@@ -1,5 +1,6 @@
 import yaml
 import os
+import torch
 from src.models.model import BERT_model
 
 # Called when the service is loaded
@@ -16,7 +17,9 @@ def init():
 
     model_path = 'src/webservice/'+name
     model = BERT_model(full, n_class=classes, lr=lr)
-    model = model.load_from_checkpoint(model_path)
+    checkpoint = torch.load(model_path)
+    print(checkpoint['hyper_parameters'])
+    #model = model.load_from_checkpoint(model_path)
 
 # Called when a request is received
 def run(raw_data):
