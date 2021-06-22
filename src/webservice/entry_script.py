@@ -1,6 +1,6 @@
 import yaml
 import os
-from src.webservice.model import BERT_model
+from src.models.model import BERT_model
 
 # Called when the service is loaded
 def init():
