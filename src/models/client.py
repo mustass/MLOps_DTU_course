@@ -1,7 +1,7 @@
 import requests
 import json
 
-endpoint = "http://47fc2036-ae6a-4ff0-9977-45e85bde4dc6.northeurope.azurecontainer.io/score"
+endpoint = "http://20.101.3.184:80/api/v1/service/monki-see-monki-sleep/score"
 x_new = [[2,180,74,24,21,23.9091702,1.488172308,22],
          [0,148,58,11,179,39.19207553,0.160829008,45]]
 
@@ -9,6 +9,7 @@ x_new = [[2,180,74,24,21,23.9091702,1.488172308,22],
 input_json = json.dumps({"data": x_new})
 print(input_json)
 # Set the content type
+
 headers = { 'Content-Type':'application/json' }
 
 predictions = requests.post(endpoint, input_json, headers = headers)

@@ -58,13 +58,17 @@ def launch_deployment(flags):
                                     cluster_purpose="DevTest")
     
     compute_name = "DeployAKS" # max 16 char
-    service_cluster = ComputeTarget.create(ws, compute_name,
+    try:
+        service_cluster = ComputeTarget.create(ws, compute_name,
                                             compute_config)
-    
+        service_cluster.wait_for_completion(show_output=True)
+    except:
+        pass
 
-    service_cluster.wait_for_completion(show_output=True)
-
-    deployment_config = AksWebservice.deploy_configuration(compute_target_name=compute_name)
+    deploy_conf = AksWebservice.deploy_configuration(
+                                compute_target_name=compute_name,
+                                auth_enabled=False,
+                                token_auth_enabled=False)
 
     #deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1,
     #                                                    memory_gb = 1, 
@@ -73,7 +77,7 @@ def launch_deployment(flags):
 
     service_name = flags['experiment_name']
     service = Model.deploy(ws, service_name, [model], inference_config, 
-                        deployment_config, overwrite=True)
+                        deploy_conf, overwrite=True)
 
     service.wait_for_deployment(True)
 
