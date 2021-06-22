@@ -4,7 +4,7 @@ from src.webservice.model import BERT_model
 
 # Called when the service is loaded
 def init():
-    global model
+    global myModel
     with open('src/webservice/config.yml') as f:
         config = yaml.safe_load(f)
 
@@ -15,8 +15,8 @@ def init():
     classes = sum([1 for k, v in datasets.items() if v==1])
 
     model_path = 'src/webservice/'+name
-    model = BERT_model(full, n_class=classes, lr=lr)
-    model = model.load_from_checkpoint(model_path)
+    #myModel = BERT_model(full, n_class=classes, lr=lr)
+    myModel = BERT_model.load_from_checkpoint(model_path, full, classes, lr)
 
 # Called when a request is received
 def run(raw_data):
