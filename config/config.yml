@@ -47,7 +47,7 @@ compute:
     cloud: true # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
     subscription_id: "aa4b9a75-08b4-4169-a974-a772bd186a7a"
     resource_group: "mlops_day6"
-    workspace_name: "mlops_project"
+    workspace_name: "s2105271"
     workspace_exists: true
     location: "westeurope" # ignored if workspace_exists is true
     compute_target: "project-compute"
