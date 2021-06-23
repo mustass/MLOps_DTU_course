@@ -18,6 +18,7 @@ from azureml.core.webservice import AciWebservice, AksWebservice
 from azureml.core.compute import AksCompute, ComputeTarget 
 from azureml.core.model import InferenceConfig
 
+
 def get_workspace(setup):
     if setup['workspace_exists']:
         return Workspace.get(name=setup['workspace_name'],
@@ -25,14 +26,14 @@ def get_workspace(setup):
                              resource_group=setup['resource_group'])
     if not setup['workspace_exists']:
         return Workspace.create(name=setup['workspace_name'],
-               subscription_id=setup['subscription_id'],
-               resource_group=setup['resource_group'],
-               create_resource_group=True,
-               location=setup['location']
-               )
+                                subscription_id=setup['subscription_id'],
+                                resource_group=setup['resource_group'],
+                                create_resource_group=True,
+                                location=setup['location'])
 
     raise ValueError("workspace_exists in YML file is supposed" +
                      "to be a boolean (true/false)")
+
 
 def launch_deployment(flags):
 
@@ -145,6 +146,7 @@ def run(config):
         #shutil.copyfile("./src/models/model.py", "./src/webservice/model.py")
         print("Static files copied successfully.")
         launch_deployment(config)
+
 
 @click.command()
 @click.argument('config_file', default="./config/config.yml")

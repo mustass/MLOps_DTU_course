@@ -12,7 +12,7 @@ print(input_json)
 
 headers = { 'Content-Type':'application/json' }
 
-predictions = requests.post(endpoint, input_json, headers = headers)
+predictions = requests.post(endpoint, input_json, headers=headers)
 predictions = predictions.content.decode('ascii')
 print(predictions)
 #predicted_classes = json.loads(predictions.json())
