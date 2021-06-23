@@ -79,7 +79,7 @@ def launch_deployment(flags):
     service = Model.deploy(ws, service_name, [model], inference_config, 
                         deploy_conf, overwrite=True)
 
-    service.wait_for_deployment(True)
+    service.wait_for_deployment(show_output=True)
 
     print(service.state)
     print("Endpoint: ", service.scoring_uri)
