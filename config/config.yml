@@ -37,7 +37,7 @@ gpus: 0 # Choose -1 for all available
 training:
   batch_size: 64     # Batch size
   lr: 0.02           # Learning rate
-  max_epochs: 2
+  max_epochs: 1
   full: false        # Whether we train the whole BART architecture or only our outer layers
   num_workers: 4
 
