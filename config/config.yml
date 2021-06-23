@@ -1,7 +1,7 @@
 experiment_name: monki-see-monki-sleep # This is done so that we can always find models and their corresponding datasets
 
 data:
-  train_val_test_splits: [0.6,0.2,0.2]
+  train_val_test_splits: [0.1,0.1,0.8]
   max_seq_length: 3 # Max review string length for the Tokenizer
   used_datasets: { # Which dataset do we want to join and load (I can't see a case where these are not the same)
                   "Books": 0,
@@ -24,34 +24,41 @@ data:
                   "Automotive": 0,
                   "Grocery_and_Gourmet_Food": 0,
                   "Patio_Lawn_and_Garden": 0,
-                  "Baby": 0,
+                  "Baby": 1,
                   "Digital_Music": 1,
-                  "Musical_Instruments": 1,
+                  "Musical_Instruments": 0,
                   "Amazon_Instant_Video": 0
                   }
 
 seed: 7
 
-gpus: -1 # Choose -1 for all available
+gpus: -0 # Choose -1 for all available
 
 training:
   batch_size: 64     # Batch size
   lr: 0.02           # Learning rate
-  max_epochs: 1
+  max_epochs: 2
   full: false        # Whether we train the whole BART architecture or only our outer layers
-  num_workers: 6
+  num_workers: 4
 
 prediction:
 
 compute:
-    cloud: true # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
+    cloud: False # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
     subscription_id: "992f0c62-c113-46d9-9706-d9d0002dd224" # "dcb1598f-693c-460c-8648-667de51a2475"
     resource_group: "myResourceGroup"
-    workspace_name: "s193035Workspace"
+    workspace_name: "404NotFound"
     workspace_exists: true
     location: "northeurope" # ignored if workspace_exists is true
     compute_target: "s193035Compute-GPU"
     environment_name: "myEnvironment"
-    deploy: true
+    deploy: False
   
-wandbkey: "8740c1fcff4d9a5925bb9569dba5b7bee409860f"
+wandbkey: "ea74d246d0b11701e4f3a55161ccc7e7d4cf2ac7"
+
+hp:
+  'tune': False
+  'lr_low': 0.001
+  'lr_high': 0.1
+  'author': asgermunch
+  'project': transformers-group-octupus-src_models
