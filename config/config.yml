@@ -24,8 +24,8 @@ data:
                   "Automotive": 0,
                   "Grocery_and_Gourmet_Food": 0,
                   "Patio_Lawn_and_Garden": 0,
-                  "Baby": 1,
-                  "Digital_Music": 1,
+                  "Baby": 0,
+                  "Digital_Music": 0,
                   "Musical_Instruments": 1,
                   "Amazon_Instant_Video": 1
                   }
