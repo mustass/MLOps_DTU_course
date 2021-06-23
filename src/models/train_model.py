@@ -10,10 +10,12 @@ from azureml.core import Run
 import wandb
 import os
 import joblib
+import shutil
 
 from azureml.core import Workspace, Model, Environment
 from azureml.core.conda_dependencies import CondaDependencies
-from azureml.core.webservice import AciWebservice
+from azureml.core.webservice import AciWebservice, AksWebservice
+from azureml.core.compute import AksCompute, ComputeTarget 
 from azureml.core.model import InferenceConfig
 
 
@@ -39,31 +41,46 @@ def launch_deployment(flags):
     ws = get_workspace(setup)
     model = ws.models[flags['experiment_name']]
 
-    env = CondaDependencies()
-    packages = ["joblib", "PyYAML"]
-    for package in packages:
-        env.add_conda_package(package)
+    shutil.copyfile("requirements.txt", "deployment_requirements.txt")
+    with open("deployment_requirements.txt", "a") as f:
+        f.write("azureml-defaults")
 
-    with open("./src/web-service/env_file.yml", "w") as f:
-        f.write(env.serialize_to_string())
+    env = Environment.from_pip_requirements("deploymentEnv", 
+                                        "deployment_requirements.txt")
 
-    inference_config = InferenceConfig(
-        runtime="python",
-        source_directory='.',
-        entry_script="./src/web-service/entry_script.py",
-        conda_file="./src/web-service/env_file.yml")
+    inference_config = InferenceConfig(source_directory='./src',
+                            entry_script="webservice/entry_script.py",
+                            environment=env)
+    
+    compute_config = AksCompute.provisioning_configuration(
+                                    vm_size = "Standard_A2_v2",
+                                    agent_count = 2,
+                                    location= "westeurope",
+                                    cluster_purpose="DevTest")
+    
+    compute_name = "DeployAKS" # max 16 char
+    try:
+        service_cluster = ComputeTarget.create(ws, compute_name,
+                                            compute_config)
+        service_cluster.wait_for_completion(show_output=True)
+    except:
+        pass
 
-    deployment_config = AciWebservice.deploy_configuration(cpu_cores=1,
-                                                           memory_gb=1,
-                                                           auth_enabled=False)
+    deploy_conf = AksWebservice.deploy_configuration(
+                                compute_target_name=compute_name,
+                                auth_enabled=False,
+                                token_auth_enabled=False)
+
+    #deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1,
+    #                                                    memory_gb = 1, 
+    #                                                    auth_enabled=False)
+    
 
     service_name = flags['experiment_name']
-    service = Model.deploy(ws,
-                           service_name, [model],
-                           inference_config,
-                           deployment_config,
-                           overwrite=True)
-    service.wait_for_deployment(True)
+    service = Model.deploy(ws, service_name, [model], inference_config, 
+                        deploy_conf, overwrite=True)
+
+    service.wait_for_deployment(show_output=True)
 
     print(service.state)
     print("Endpoint: ", service.scoring_uri)
@@ -103,32 +120,27 @@ def train(config):
         print("\nRegistering the model...")
         best_model_path = checkpoint_callback.best_model_path
         run = Run.get_context()
-        run.upload_file(name='./models/' + name,
-                        path_or_stream=best_model_path)
-        run.register_model(model_path='./models/' + name, model_name=name)
+        run.upload_file(name = './models/' + name, 
+                path_or_stream = best_model_path)
+        run.register_model(model_path='./models/'+ name, 
+                            model_name=name)
+        shutil.copyfile(best_model_path, "./src/webservice/"+name)
+        
         print("Model registered successfully")
 
     if deploy:
         try:
-            os.makedirs("./src/web-service", exist_ok=True)
+            os.makedirs("./src/webservice", exist_ok=True)
         except FileExistsError:
             pass
         run.upload_file(name="./config/config.yml",
-                        path_or_stream='./config/config.yml')
+                        path_or_stream = './config/config.yml')
+        print("Copying static files into source directory...")
+        shutil.copyfile("./config/config.yml", "./src/webservice/config.yml")
+        shutil.copyfile("./src/models/model.py", "./src/webservice/model.py")
+        print("Static files copied successfully.")
         launch_deployment(config)
-
-    run.wait_for_completion(show_output=False)
-
-    if deploy:
-        try:
-            os.makedirs("./src/web-service", exist_ok=True)
-        except FileExistsError:
-            pass
-        run.upload_file(name="./config/config.yml",
-                        path_or_stream='./config/config.yml')
-        launch_deployment(config)
-
-    run.wait_for_completion(show_output=False)
+        
 
 
 @click.command()
