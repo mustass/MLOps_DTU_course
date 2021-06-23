@@ -41,11 +41,9 @@ def launch_deployment(flags):
     ws = get_workspace(setup)
     version = flags['deploy']['version']
     if version == 0:
-        model = ws.models[deploy_info['model_name']]
+        model = Model(ws, deploy_info['model_name'])
     elif version > 0:
-        model = ws.models[deploy_info['model_name']]
-    elif version == -1:
-        model = ws.models[deploy_info['model_name']]
+        model = Model(ws, deploy_info['model_name'], version=version)
 
     shutil.copyfile("requirements.txt", "deployment_requirements.txt")
     with open("deployment_requirements.txt", "a") as f:
