@@ -8,22 +8,22 @@ def test_dataset(dataset_name,config_path='config/test_config.yml'):
     with pytest.raises(ValueError,
                        match=r"Requested dataset does not exists on server."):
         download_dataset(dataset_name)
-        with open(config_path) as f:
-            config_file = yaml.safe_load(f)
-        ensemble(config_file)
-        
-        # Check train data
-        data_path = 'data/processed/'+str(config_file['experiment_name'])+'/'
-        file_path = 'train.pklz'
-        check_data(data_path,file_path)
-        
-        # Check test data
-        file_path = 'test.pklz'
-        check_data(data_path,file_path)
-        
-        # Check validation data
-        file_path = 'validate.pklz'
-        check_data(data_path,file_path)
+    with open(config_path) as f:
+        config_file = yaml.safe_load(f)
+    ensemble(config_file)
+
+    # Check train data
+    data_path = 'data/processed/'+str(config_file['experiment_name'])+'/'
+    file_path = 'train.pklz'
+    check_data(data_path,file_path)
+
+    # Check test data
+    file_path = 'test.pklz'
+    check_data(data_path,file_path)
+
+    # Check validation data
+    file_path = 'validate.pklz'
+    check_data(data_path,file_path)
         
 def check_data(data_path,file_path):
     assert os.path.isfile(data_path + file_path), f'directory {data_path+file_path} does not exist'
