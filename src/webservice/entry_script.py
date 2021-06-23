@@ -4,6 +4,7 @@ import torch
 from src.models.model import BERT_model
 from transformers import BertTokenizerFast
 from torch.utils.data import TensorDataset
+from azureml.core import Workspace
 
 def get_workspace(setup):
     if setup['workspace_exists']:
@@ -28,9 +29,10 @@ def init():
     with open('src/webservice/config.yml') as f:
         config = yaml.safe_load(f)
 
-    ws = get_workspace(config['compute'])
-    run = ws.get_run(config['deploy']['run_id'])
-    run.download_file('./models/' + config['experiment_name'], 'src/models/')
+    if not config['training']['value'] and config['deploy']['value']:
+        ws = get_workspace(config['compute'])
+        run = ws.get_run(config['deploy']['run_id'])
+        run.download_file('./models/' + config['experiment_name'], 'src/models/')
 
     name = config['experiment_name']
     full = config['training']['full']
