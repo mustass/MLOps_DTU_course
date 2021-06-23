@@ -1,4 +1,4 @@
-experiment_name: monki-see-monki-sleep # This is done so that we can always find models and their corresponding datasets
+experiment_name: MarcoExperiment # This is done so that we can always find models and their corresponding datasets
 
 data:
   train_val_test_splits: [0.6,0.2,0.2]
@@ -35,36 +35,36 @@ seed: 7
 gpus: -1 # Choose -1 for all available
 
 training:
+  value: true # if this is false, the following os of course not used
   batch_size: 64     # Batch size
   lr: 0.02           # Learning rate
   max_epochs: 1
-  full: false        # Whether we train the whole BART architecture or only our outer layers
+  full: false        # Whether we train the whole BERT architecture or only our outer layers
   num_workers: 6
 
 prediction:
 
 compute:
-    cloud: true # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
-    subscription_id: "dcb1598f-693c-460c-8648-667de51a2475"
-    resource_group: "myResourceGroup"
-    workspace_name: "myWorkspace"
-    workspace_exists: true
-    location: "westeurope" # ignored if workspace_exists is true
-    compute_target: "myGPU"
-    environment_name: "myEnvironment"
-  
-train:
-    value: true
+  cloud: true # if cloud is false, all the rest is ignored. If clous is true is provided, they are used.
+  subscription_id: "dcb1598f-693c-460c-8648-667de51a2475"
+  resource_group: "myResourceGroup"
+  workspace_name: "myWorkspace"
+  workspace_exists: true
+  location: "westeurope" # ignored if workspace_exists is true
+  compute_target: "myGPUCompute"
+  environment_name: "myEnvironment"
 
-deploy:
-    value: true
-    model_name: monki-see-monki-sleep
-    version: 0 # -1 for the version with the best metrics, 0 for the latest version, else the version number
-    vm_instance: "Standard_A2_v2" # do not change
-    aks_compute_name: "DeployAKS" # max 16 char
-    agent_count: 2 # do not change
-    location: "westeurope" # do not change
-    purpose: "DevTest" # do not change
-    service_name: "monki-see-monki-sleep"
+
+deploy: # used only if compute['cloud']: true
+  value: false # if this is false, the following is of course not used
+  model_name: "MarcoExperiment"
+  run_id: "MarcoExperiment_1624477567_6845258d"
+  version: 0 # -1 for the version with the best metrics, 0 for the latest version, else the version number
+  aks_compute_name: "DeployAKS" # max 16 char
+  vm_instance: "Standard_A2_v2" # do not change
+  agent_count: 2 # do not change
+  location: "westeurope" # do not change
+  purpose: "DevTest" # do not change
+  service_name: "my-service" # It must only consist of lowercase letters, numbers, or dashes, start with a letter, end with a letter or number, and be between 3 and 32 characters long
 
 wandbkey: "0b560be30b7d9ad32a84e958a3d7c1aeb94cabeb"

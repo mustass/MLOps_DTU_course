@@ -90,7 +90,7 @@ def launch_deployment(flags):
 def run(config):
     cloud = config['compute']['cloud']
     deploy_flag = config['deploy']['value']
-    train_flag = config['train']['value']
+    train_flag = config['training']['value']
 
     if train_flag:
 
@@ -121,9 +121,10 @@ def run(config):
 
         # model registration
         if cloud:
-            print("\nRegistering the model...")
             best_model_path = checkpoint_callback.best_model_path
             run = Run.get_context()
+            print("\nRegistering the model...\n")
+            print("Run ID is: " + str(run.id) + "\n")
             run.upload_file(name = './models/' + name, 
                     path_or_stream = best_model_path)
             run.register_model(model_path='./models/'+ name, 
