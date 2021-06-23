@@ -54,8 +54,8 @@ def run(ctx, config_file):
 
         run = experiment.submit(config)
         aml_url = run.get_portal_url()
-
-        run.wait_for_completion()
+        
+        run.wait_for_completion(show_output=True)
 
 
 if __name__ == "__main__":
