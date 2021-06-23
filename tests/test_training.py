@@ -12,7 +12,7 @@ from src.data.lightning_data_module import MyDataModule
 from src.data.fetch_dataset import parse_datasets
 import torch
 
-def test_training(config_path='config/config.yml'):
+def test_training(config_path='config/test_config.yml'):
     # Load config file
     with open(config_path) as f:
             config = yaml.safe_load(f)
