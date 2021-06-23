@@ -2,7 +2,7 @@ experiment_name: monki-see-monki-sleep # This is done so that we can always find
 
 data:
   train_val_test_splits: [0.6,0.2,0.2]
-  max_seq_length: 20 # Max review string length for the Tokenizer
+  max_seq_length: 5 # Max review string length for the Tokenizer
   used_datasets: { # Which dataset do we want to join and load (I can't see a case where these are not the same)
                   "Books": 0,
                   "Electronics": 0,
