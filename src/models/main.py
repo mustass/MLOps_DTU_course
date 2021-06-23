@@ -59,31 +59,6 @@ def run(ctx, config_file):
 
 
 if __name__ == "__main__":
-    config_path='config/config.yml'
-    with open(config_path) as f:
-        config = yaml.safe_load(f)
-    
-    if config['hp']['tune']:
-        print("Starting main")
-        study = optuna.create_study(direction='minimize',pruner=optuna.pruners.MedianPruner(n_warmup_steps=5))
-        study.optimize(objective, n_trials=3)
-    
-        pruned_trials = study.get_trials(deepcopy=False, states=[TrialState.PRUNED])
-        complete_trials = study.get_trials(deepcopy=False, states=[TrialState.COMPLETE])
-    
-        print("Study statistics: ")
-        print("  Number of finished trials: ", len(study.trials))
-        print("  Number of pruned trials: ", len(pruned_trials))
-        print("  Number of complete trials: ", len(complete_trials))
-    
-        print("Best trial:")
-        trial = study.best_trial
-    
-        print("  Value: ", trial.value)
-    
-        print("  Params: ")
-        for key, value in trial.params.items():
-            print("    {}: {}".format(key, value))
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)
 
