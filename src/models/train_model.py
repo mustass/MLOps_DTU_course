@@ -37,8 +37,15 @@ def get_workspace(setup):
 def launch_deployment(flags):
 
     setup = flags['compute']
+    deploy_info = flags['deploy']
     ws = get_workspace(setup)
-    model = ws.models[flags['experiment_name']]
+    version = flags['deploy']['version']
+    if version == 0:
+        model = ws.models[deploy_info['model_name']]
+    elif version > 0:
+        model = ws.models[deploy_info['model_name']]
+    elif version == -1:
+        model = ws.models[deploy_info['model_name']]
 
     shutil.copyfile("requirements.txt", "deployment_requirements.txt")
     with open("deployment_requirements.txt", "a") as f:
@@ -52,12 +59,12 @@ def launch_deployment(flags):
                             environment=env)
     
     compute_config = AksCompute.provisioning_configuration(
-                                    vm_size = "Standard_A2_v2",
-                                    agent_count = 2,
-                                    location= "westeurope",
-                                    cluster_purpose="DevTest")
+                                    vm_size = deploy_info['vm_instance'],
+                                    agent_count = deploy_info['agent_count'],
+                                    location= deploy_info['location'],
+                                    cluster_purpose=deploy_info['purpose'])
     
-    compute_name = "DeployAKS" # max 16 char
+    compute_name = deploy_info['aks_compute_name'] 
     try:
         service_cluster = ComputeTarget.create(ws, compute_name,
                                             compute_config)
@@ -70,12 +77,7 @@ def launch_deployment(flags):
                                 auth_enabled=False,
                                 token_auth_enabled=False)
 
-    #deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1,
-    #                                                    memory_gb = 1, 
-    #                                                    auth_enabled=False)
-    
-
-    service_name = flags['experiment_name']
+    service_name = deploy_info['service_name']
     service = Model.deploy(ws, service_name, [model], inference_config, 
                         deploy_conf, overwrite=True)
 
@@ -85,68 +87,70 @@ def launch_deployment(flags):
     print("Endpoint: ", service.scoring_uri)
 
 
-def train(config):
-    name = config['experiment_name']
-    datasets = parse_datasets(config)
-    lr = config['training']['lr']
-    epochs = config['training']['max_epochs']
-    full = config['training']['full']
+def run(config):
     cloud = config['compute']['cloud']
-    deploy = config['compute']['deploy']
+    deploy_flag = config['deploy']['value']
+    train_flag = config['train']['value']
 
-    model = BERT_model(full, n_class=len(datasets), lr=lr)
+    if train_flag:
 
-    data = MyDataModule(config)
+        name = config['experiment_name']
+        datasets = parse_datasets(config)
+        lr = config['training']['lr']
+        epochs = config['training']['max_epochs']
+        full = config['training']['full']
 
-    checkpoint_callback = ModelCheckpoint(monitor='val_loss',
-                                          dirpath='./models/checkpoints',
-                                          filename=name +
-                                          '-{epoch:02d}-{val_loss:.2f}',
-                                          save_top_k=3,
-                                          mode='min')
+        model = BERT_model(full, n_class=len(datasets), lr=lr)
+        data = MyDataModule(config)
 
-    wandb.login(key=config['wandbkey'])
-    logger = WandbLogger(name=name)
-    trainer = Trainer(logger=logger,
-                      max_epochs=epochs,
-                      callbacks=[checkpoint_callback],
-                      gpus=config['gpus'])
+        checkpoint_callback = ModelCheckpoint(monitor='val_loss',
+                                                dirpath='./models/checkpoints',
+                                                filename=name +
+                                                '-{epoch:02d}-{val_loss:.2f}',
+                                                save_top_k=3,
+                                                mode='min')
 
-    trainer.fit(model, data)
+        wandb.login(key=config['wandbkey'])
+        logger = WandbLogger(name=name)
+        trainer = Trainer(logger=logger,
+                            max_epochs=epochs,
+                            callbacks=[checkpoint_callback],
+                            gpus=config['gpus'])
 
-    # model registration
-    if cloud:
-        print("\nRegistering the model...")
-        best_model_path = checkpoint_callback.best_model_path
-        run = Run.get_context()
-        run.upload_file(name = './models/' + name, 
-                path_or_stream = best_model_path)
-        run.register_model(model_path='./models/'+ name, 
-                            model_name=name)
-        shutil.copyfile(best_model_path, "./src/webservice/"+name)
-        
-        print("Model registered successfully")
+        trainer.fit(model, data)
 
-    if deploy:
+        # model registration
+        if cloud:
+            print("\nRegistering the model...")
+            best_model_path = checkpoint_callback.best_model_path
+            run = Run.get_context()
+            run.upload_file(name = './models/' + name, 
+                    path_or_stream = best_model_path)
+            run.register_model(model_path='./models/'+ name, 
+                                model_name=name)
+            shutil.copyfile(best_model_path, "./src/webservice/"+name)
+            
+            print("Model registered successfully")
+
+    if deploy_flag and cloud:
         try:
             os.makedirs("./src/webservice", exist_ok=True)
         except FileExistsError:
             pass
-        run.upload_file(name="./config/config.yml",
-                        path_or_stream = './config/config.yml')
+        #run.upload_file(name="./config/config.yml",
+        #                path_or_stream = './config/config.yml')
         print("Copying static files into source directory...")
         shutil.copyfile("./config/config.yml", "./src/webservice/config.yml")
-        shutil.copyfile("./src/models/model.py", "./src/webservice/model.py")
+        #shutil.copyfile("./src/models/model.py", "./src/webservice/model.py")
         print("Static files copied successfully.")
         launch_deployment(config)
-        
 
 @click.command()
 @click.argument('config_file', default="./config/config.yml")
 def main(config_file):
     with open(config_file) as f:
         config = yaml.safe_load(f)
-    train(config)
+    run(config)
 
 
 if __name__ == '__main__':
