@@ -4,7 +4,7 @@ import yaml, os, pickle, gzip
 
 @pytest.mark.parametrize(
     "dataset_name", ["CD and Vinyl", "Video Games", "video_games", "baby"])
-def test_dataset(dataset_name,config_path='config/config.yml'):
+def test_dataset(dataset_name,config_path='config/config_test.yml'):
     with pytest.raises(ValueError,
                        match=r"Requested dataset does not exists on server."):
         with open(config_path) as f:
