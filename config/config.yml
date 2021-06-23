@@ -52,9 +52,9 @@ compute:
     location: "westeurope" # ignored if workspace_exists is true
     compute_target: "s2105271"
     environment_name: "myEnvironment"
-    deploy: True
+    deploy: true
   
-wandbkey: "ea74d246d0b11701e4f3a55161ccc7e7d4cf2ac7"
+wandbkey: "33f3c65ab2fd849f6c70cc9f40a93f6b63bf7243"
 
 hp:
   'tune': False
