@@ -64,7 +64,7 @@ def objective(trial,config_path='config/config.yml'):
 
 if __name__ == "__main__":
     print("Starting main")
-    study = optuna.create_study(direction='minimize',pruner=optuna.pruners.MedianPruner(n_warmup_steps=5))
+    study = optuna.create_study(direction='minimize',pruner=optuna.pruners.MedianPruner(n_warmup_steps=1))
     study.optimize(objective, n_trials=3)
 
     pruned_trials = study.get_trials(deepcopy=False, states=[TrialState.PRUNED])
