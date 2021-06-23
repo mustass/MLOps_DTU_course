@@ -1,5 +1,5 @@
 import pytest
-from src.data.fetch_dataset import ensemble
+from src.data.fetch_dataset import ensemble, download_dataset
 import yaml, os, pickle, gzip
 
 @pytest.mark.parametrize(
@@ -7,6 +7,7 @@ import yaml, os, pickle, gzip
 def test_dataset(dataset_name,config_path='config/test_config.yml'):
     with pytest.raises(ValueError,
                        match=r"Requested dataset does not exists on server."):
+        download_dataset(dataset_name)
         with open(config_path) as f:
             config_file = yaml.safe_load(f)
         ensemble(config_file)
