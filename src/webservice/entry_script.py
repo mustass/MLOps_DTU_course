@@ -18,7 +18,7 @@ def init():
     model_path = 'src/webservice/'+name
     model = BERT_model(full, n_class=classes, lr=lr)
     checkpoint = torch.load(model_path)
-    print(checkpoint['hyper_parameters'])
+    print(checkpoint)
     #model = model.load_from_checkpoint(model_path)
 
 # Called when a request is received
