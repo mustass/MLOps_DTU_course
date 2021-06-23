@@ -22,7 +22,6 @@ def get_workspace(setup):
     raise ValueError("workspace_exists in YML file is supposed" +
                      "to be a boolean (true/false)")
 
-
 # Called when the service is loaded
 def init():
     global model
@@ -39,16 +38,14 @@ def init():
     full = config['training']['full']
     lr = config['training']['lr']
     datasets = config['data']['used_datasets']
-    classes = sum([1 for k, v in datasets.items() if v == 1])
+    classes = sum([1 for k, v in datasets.items() if v==1])
 
     model_path = 'src/models/'+name
     model = BERT_model(full, n_class=classes, lr=lr)
     model = model.load_from_checkpoint(model_path)
 
-
 # Called when a request is received
 def run(raw_data):
-<<<<<<< HEAD
     tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
 
     tokens_train = tokenizer.batch_encode_plus(raw_data,
@@ -61,8 +58,3 @@ def run(raw_data):
     
     preds = model.predict_step(data)
     return preds
-    
-=======
-    return 1
-    
->>>>>>> working_deploy

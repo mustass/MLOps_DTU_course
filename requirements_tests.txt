@@ -1,4 +1,4 @@
--e git+https://github.com/stas97/transformers-group-octupus.git@working_deploy#egg=src
+-e git+https://github.com/stas97/transformers-group-octupus.git@dev_marco2#egg=src
 Sphinx
 coverage
 awscli
