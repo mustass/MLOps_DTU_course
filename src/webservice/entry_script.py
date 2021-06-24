@@ -48,7 +48,6 @@ def init():
 
 # Called when a request is received
 def run(raw_data):
-<<<<<<< HEAD
     tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
 
     tokens_train = tokenizer.batch_encode_plus(raw_data,
@@ -62,7 +61,3 @@ def run(raw_data):
     preds = model.predict_step(data)
     return preds
     
-=======
-    return 1
-    
->>>>>>> working_deploy
