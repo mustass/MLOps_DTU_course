@@ -65,6 +65,10 @@ Project Organization
     │   │   └── test_config.yml
     | 
     ├── .giuthub/workflows <- GitHub workflows for test and other fun
+    │   │   └── flake8.yml
+    │   │   └── tests.yml
+    │   │   └── isort.yml
+    |
     ├── data (local use)
     │   ├── external       <- Data from third party sources.
     │   ├── interim        <- Intermediate data that has been transformed.
