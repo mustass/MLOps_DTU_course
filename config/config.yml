@@ -56,7 +56,7 @@ compute:
 
 deploy: # used only if compute['cloud']: true
   value: true # if this is false, the following is of course not used
-  model_name: "OctopusExperiment"
+  model_name: "MarcoExperiment"
   run_id: "OctopusExperiment_1624477567_6845258d" # very ugly solution to retrieve saved weights
   version: 0 # 0 for the latest version, else the version number
   aks_compute_name: "DeployAKS" # max 16 char
