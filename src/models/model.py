@@ -15,7 +15,7 @@ class BERT_model(LightningModule):
         super().__init__()
 
         self.save_hyperparameters()
-        
+
         self.bert = AutoModel.from_pretrained('bert-base-uncased')
         if not full:
             for param in self.bert.parameters():

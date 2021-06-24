@@ -16,7 +16,7 @@ def init():
     datasets = config['data']['used_datasets']
     classes = sum([1 for k, v in datasets.items() if v == 1])
 
-    model_path = 'src/webservice/'+name
+    model_path = 'src/webservice/' + name
     model = BERT_model(full, n_class=classes, lr=lr)
     model = model.load_from_checkpoint(model_path)
 
@@ -24,4 +24,3 @@ def init():
 # Called when a request is received
 def run(raw_data):
     return 1
-    

@@ -61,7 +61,14 @@ Project Organization
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
     ├── README.md          <- The top-level README for developers using this project.
     ├── config             <- Config files for experiments, test and deploying
+    │   │   └── config.yml
+    │   │   └── test_config.yml
+    | 
     ├── .giuthub/workflows <- GitHub workflows for test and other fun
+    │   │   └── flake8.yml
+    │   │   └── tests.yml
+    │   │   └── isort.yml
+    |
     ├── data (local use)
     │   ├── external       <- Data from third party sources.
     │   ├── interim        <- Intermediate data that has been transformed.
