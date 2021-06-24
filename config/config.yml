@@ -56,9 +56,9 @@ compute:
 
 deploy: # used only if compute['cloud']: true
   value: true # if this is false, the following is of course not used
-  model_name: "MarcoExperiment"
-  run_id: "MarcoExperiment_1624477567_6845258d" # very ugly solution to retrieve saved weights
-  version: 0 # -1 for the version with the best metrics, 0 for the latest version, else the version number
+  model_name: "OctopusExperiment"
+  run_id: "OctopusExperiment_1624477567_6845258d" # very ugly solution to retrieve saved weights
+  version: 0 # 0 for the latest version, else the version number
   aks_compute_name: "DeployAKS" # max 16 char
   vm_instance: "Standard_A2_v2" # do not change
   agent_count: 2 # do not change
